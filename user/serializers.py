@@ -20,7 +20,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         """ Meta inner class specifies the model to be used
             by the ModelSerializer, and table columns or
-            class properties used (in the fields property)
+            class properties used (in the fields property).
+            The field property causes name, email and token fields
+            to be in serializer.data if data passed to serializer is valid.
+            In such case, password will not be in serializer.data because
+            it is write_only.
         """
         model = User
         fields = ['name', 'email', 'password', 'token']
