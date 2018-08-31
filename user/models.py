@@ -17,8 +17,30 @@ class UserManager(BaseUserManager):
     """
 
     def create_user(self, email, name, password):
-        """ Creates user assigning it an email, name and encrypted password. """
+        """ Creates user assigning it an email, name and encrypted password.
+            The helper method _set_user_data has logic for setting these fields.
+        """
+        user = self._set_user_data(email=email, name=name, password=password)
+        user.save()
+        return user
 
+    def create_superuser(self, name, email, password):
+        """ Creates superuser with access to admin site.
+        """
+        user = self._set_user_data(email=email, name=name, password=password)
+
+        # is_staff field must be True in order for the user to have access
+        # to the admin site
+        user.is_staff = True
+        user.save()
+        return user
+
+    def _set_user_data(self, name, email, password):
+        """ Helper function used by create_superuser and create_user.
+            Sets up the email, name and encrypted password of the user.
+            The user is returned but not saved; saving is accomplished
+            in create_superuser and create_user.
+        """
         if email is None:
             raise TypeError('The User must have an email.')
         if name is None:
@@ -32,7 +54,6 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, name=name)
         user.set_password(password)
         user.is_active = True
-        user.save()
 
         return user
 
@@ -47,6 +68,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=False)
+
+    # is_staff is required by Django to create users with access to admin site
+    is_staff = models.BooleanField(default=False)
 
     # set the username field used to log in as email,
     # and make name field a required fieldself.
