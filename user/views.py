@@ -18,16 +18,15 @@ class RegistrationAPIView(APIView):
      def post(self, request):
          """ Handles POST requests. The user data used for registration
              is contained in request.user. The request body is sent
-             as application/json from the client side.
+             as application/json from the client side, and should have
+             email, name and password.
          """
-
-         data = request.data.get('user', {})
 
          # pass data to the serializer. If there are any missing data
          # or invalid datas (based on the model serializer fields) the
          # is_valid() will be false.
 
-         serializer = serializer_class(data=data)
+         serializer = self.serializer_class(data=request.data)
          if serializer.is_valid():
              # if all fields check out, save the User into the database
              # and return the User in a 201 Response. The user returned
@@ -35,5 +34,6 @@ class RegistrationAPIView(APIView):
              serializer.save()
              return Response(serializer.data, status=status.HTTP_201_CREATED)
          else:
-             return Response({'message': 'HTTP 400 BAD REQUEST.'},
+             return Response(serializer.errors,
+                            #{'message': 'HTTP 400 BAD REQUEST.'},
                              status=status.HTTP_400_BAD_REQUEST)
