@@ -30,8 +30,11 @@ class UserManager(BaseUserManager):
         user = self._set_user_data(email=email, name=name, password=password)
 
         # is_staff field must be True in order for the user to have access
-        # to the admin site
+        # to the admin site. Also, is_superuser set to True means that the user
+        # has permission to create, edit and delete objects in admin site.
         user.is_staff = True
+        user.is_superuser = True
+
         user.save()
         return user
 
