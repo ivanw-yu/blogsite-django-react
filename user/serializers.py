@@ -52,12 +52,12 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
 
         if email is None:
-            raise serializer.ValidationError(
+            raise serializers.ValidationError(
                 'Email is required.'
             )
 
         if password is None:
-            raise serializer.ValidationError(
+            raise serializers.ValidationError(
                 'Password is required.'
             )
 
@@ -66,7 +66,7 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=email, password=password)
 
         if user is None:
-            raise serializer.ValidationError(
+            raise serializers.ValidationError(
                 'Email and password combination invalid.'
             )
 
