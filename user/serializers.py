@@ -38,12 +38,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email = serializers.CharField(max_length=300)
     password = serializers.CharField(min_length=5,
                                      max_length=50,
                                      write_only=True)
 
-    token = serializers.CharField(max_length=300)
+    token = serializers.CharField(max_length=300,
+                                  read_only=True)
 
     def validate(self, data):
 
@@ -70,6 +71,7 @@ class LoginSerializer(serializers.Serializer):
             )
 
         return {
-            'user': user,
+            'user': {'email': user.email,
+                     'name': user.name},
             'token': user.token
         }

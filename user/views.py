@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 
-from .serializers import RegistrationSerializer
+from .serializers import ( RegistrationSerializer,
+                           LoginSerializer )
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -37,3 +38,42 @@ class RegistrationAPIView(APIView):
              return Response(serializer.errors,
                             #{'message': 'HTTP 400 BAD REQUEST.'},
                              status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginAPIView(APIView):
+    """ Handles POST /api/login requests.
+        Email and password fields are taken from requests and are
+        used to authenticate the user. Authenticated users are given
+        a json web token.
+    """
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        """ POST /api/login endpoint.
+            request is expected to have an application/json body
+            with fields: 1) email
+                         2) password
+            The request.data containing the email and password is passed
+            to the LoginSerializer which contains logic for verifying
+            valid email and password combination.
+        """
+
+        # pass request.data dictionary containing email and password
+        # to LoginSerializer.
+        # print('request.data: ', request.data,
+        #                         request.data.__class__,
+        #                         request.data.get('email'),
+        #                         request.data.get('email').__class__,
+        #                         end='------------------------------\n')
+        serializer = self.serializer_class(data=request.data)
+
+        # check if the data sent in request.data has all fields required
+        # and the email and password combination is valid.
+        # If so, serializer.data will contain a user dictionary (with email and
+        # name fields), and the token.
+        if serializer.is_valid():
+            return Response(serializer.validated_data,
+                            status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status.HTTP_400_BAD_REQUEST)
