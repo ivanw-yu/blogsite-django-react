@@ -75,3 +75,45 @@ class LoginSerializer(serializers.Serializer):
                      'name': user.name},
             'token': user.token
         }
+
+class UserSerializer(serializers.ModelSerializer):
+    """ Responsible for updating user fields and
+        retrieving a single user.
+    """
+    class Meta:
+        model = User
+        fields = ('id',
+                  'email',
+                  'name',
+                  'password',
+                  'token')
+        extra_kwargs = {'password' : {'write_only': True}}
+        read_only_fields = ('token',)
+
+    def update(self, instance, validated_data):
+        """ Provides logic for updating the user.
+            instance refers to the user being updated.
+            Example use:
+            serializer = UserSerializer(some_user, data=request.data)
+            .... serializer.save() after validation
+        """
+        print('\n-------\n modelserializer update gets called\n-------\n')
+
+        # Remove and retrieve password from validated_data dictionary
+        # pop() returns None if the password is not set
+        password = validated_data.pop('password', None)
+
+        # if password is provided in the validated data,
+        # set the encrypted password
+        if password is not None:
+            instance.set_password(password)
+
+        # set all other properties provided for the user
+        # setattr(instance, key, value) works the same way as instance.key=value
+        # where the key is the name of the property of the instance.
+        for (key, value) in validated_data:
+            setattr(instance, key, value)
+
+        # save changes to the database's table for the User model.
+        instance.save()
+        return instance
