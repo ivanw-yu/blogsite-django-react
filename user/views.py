@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework import status
 
 from .serializers import ( RegistrationSerializer,
-                           LoginSerializer )
+                           LoginSerializer,
+                           UserSerializer)
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -77,3 +79,34 @@ class LoginAPIView(APIView):
         else:
             return Response(serializer.errors,
                             status.HTTP_400_BAD_REQUEST)
+
+class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    """ Handles PUT or PATCH /api/users/id
+        and GET /api/users/id
+    """
+    serializer_class = UserSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        """ Gets a user
+        """
+        serializer = UserSerializer(data=request.data)
+        return Response(serializer.data, status.HTTP_OK_200)
+
+    def update(self, request, *args, **kwargs):
+        """ Updates a user.
+        """
+        # request should provide the user having id, email, updated fields, etc.
+
+        # First, get the id provided in the request, and use it to find the user
+        id = request.data.get('id', {})
+        user = User.objects.get(pk=id)
+
+        # this will trigger the overridden update() method of the UserSerializer
+        serializer = serializer_class(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.validated_data,
+                            status.HTTP_OK_200)
+        else:
+            return Response(serializer.errors, status.HTTP_BAD_REQUEST_400)
