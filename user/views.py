@@ -8,6 +8,7 @@ from rest_framework import status
 from .serializers import ( RegistrationSerializer,
                            LoginSerializer,
                            UserSerializer)
+from .models import User
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -62,11 +63,6 @@ class LoginAPIView(APIView):
 
         # pass request.data dictionary containing email and password
         # to LoginSerializer.
-        # print('request.data: ', request.data,
-        #                         request.data.__class__,
-        #                         request.data.get('email'),
-        #                         request.data.get('email').__class__,
-        #                         end='------------------------------\n')
         serializer = self.serializer_class(data=request.data)
 
         # check if the data sent in request.data has all fields required
@@ -75,38 +71,50 @@ class LoginAPIView(APIView):
         # name fields), and the token.
         if serializer.is_valid():
             return Response(serializer.validated_data,
-                            status.HTTP_200_OK)
+                            status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,
-                            status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """ Handles PUT or PATCH /api/users/id
         and GET /api/users/id
     """
     serializer_class = UserSerializer
+    permission_classes= (AllowAny,)
+    lookup_field = "id"
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, pk):
         """ Gets a user
         """
-        serializer = UserSerializer(data=request.data)
-        return Response(serializer.data, status.HTTP_OK_200)
+        try:
+            user = User.objects.get(pk=pk, is_active=True)
+            return Response({
+                'email': user.email,
+                'name': user.name,
+            })
+        except:
+            return Response({"error": "The user you are locating does not exist."},
+                              status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request, *args, **kwargs):
-        """ Updates a user.
+    def update(self, request, pk):
+        """ Handles PUT/PATCH /api/users/<pk>/
+            Updates a user based on request application/json data and
+            primary key id which is a part of the url.
         """
-        # request should provide the user having id, email, updated fields, etc.
 
-        # First, get the id provided in the request, and use it to find the user
-        id = request.data.get('id', {})
-        user = User.objects.get(pk=id)
+
+        user = User.objects.get(pk=pk, is_active=True)
 
         # this will trigger the overridden update() method of the UserSerializer
-        serializer = serializer_class(user, data=request.data, partial=True)
+        serializer = self.serializer_class(user, data=request.data, partial=True)
 
+        # if serializer is valid, return the serializer.data
+        # use serializer.data instead of serializer.validated_data because
+        # the latter will only contain provided fields, not all of them.
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.validated_data,
-                            status.HTTP_OK_200)
+            return Response(serializer.data,
+                            status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status.HTTP_BAD_REQUEST_400)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

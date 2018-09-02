@@ -76,10 +76,17 @@ class LoginSerializer(serializers.Serializer):
             'token': user.token
         }
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     """ Responsible for updating user fields and
         retrieving a single user.
     """
+
+    # give the model serializer a password field, so it
+    # would not be refering to the required password field of the model
+    # therefore update() will not require password field.
+    password = serializers.CharField(min_length=8,
+                                     max_length=128,
+                                     write_only=True)
     class Meta:
         model = User
         fields = ('id',
@@ -87,17 +94,16 @@ class UserSerializer(serializers.ModelSerializer):
                   'name',
                   'password',
                   'token')
-        extra_kwargs = {'password' : {'write_only': True}}
-        read_only_fields = ('token',)
+        read_only_fields = ('token','id','email',)
 
     def update(self, instance, validated_data):
-        """ Provides logic for updating the user.
-            instance refers to the user being updated.
+        """ Provides logic for updating/partially updating the user.
+            Instance refers to the user being updated.
             Example use:
-            serializer = UserSerializer(some_user, data=request.data)
+            user = User.objects.get(pk=id)
+            serializer = UserSerializer(user, data=request.data, partial=True)
             .... serializer.save() after validation
         """
-        print('\n-------\n modelserializer update gets called\n-------\n')
 
         # Remove and retrieve password from validated_data dictionary
         # pop() returns None if the password is not set
@@ -111,7 +117,7 @@ class UserSerializer(serializers.ModelSerializer):
         # set all other properties provided for the user
         # setattr(instance, key, value) works the same way as instance.key=value
         # where the key is the name of the property of the instance.
-        for (key, value) in validated_data:
+        for (key, value) in validated_data.items():
             setattr(instance, key, value)
 
         # save changes to the database's table for the User model.
