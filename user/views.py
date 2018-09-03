@@ -11,7 +11,7 @@ from .serializers import ( RegistrationSerializer,
                            LoginSerializer,
                            UserSerializer)
 from .models import User
-from .backends import MyJWTAuthentication
+from .authentications import MyJWTAuthentication
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -85,7 +85,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """
     serializer_class = UserSerializer
     authentication_classes = (MyJWTAuthentication,)
-    #permission_classes= (IsAuthenticatedOrReadOnly,)
+    permission_classes= (IsAuthenticatedOrReadOnly,)
     lookup_field = "id"
 
     def retrieve(self, request, *args, **kwargs):
