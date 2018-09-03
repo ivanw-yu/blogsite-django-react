@@ -23,16 +23,16 @@ class OwnObjectOrReadOnlyPermission(permissions.BasePermission):
             self.check_object_permission(request, model_instance)
             as the 2nd argument.
         """
+
         # check if GET, HEAD or OPTION request, if so, permit.
         if request.method in permissions.SAFE_METHODS:
             return True
 
+        if request.user is None:
+            return False
+
         # grab the user from the request.
         id = request.user.id
-
-        # # if the user wasn't provided in request, do not permit.
-        # if user is None:
-        #     return False
 
         # check if user has permission to manipulate resource by comparing
         # the object model instance's user id to the user id from the request.
