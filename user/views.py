@@ -12,6 +12,8 @@ from .serializers import ( RegistrationSerializer,
                            UserSerializer)
 from .models import User
 from .authentications import MyJWTAuthentication
+from .permissions import (OwnObjectOrReadOnlyPermission,
+                          OwnSelfOrReadOnlyPermission)
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -85,7 +87,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """
     serializer_class = UserSerializer
     authentication_classes = (MyJWTAuthentication,)
-    permission_classes= (IsAuthenticatedOrReadOnly,)
+    permission_classes= (OwnSelfOrReadOnlyPermission,)
     lookup_field = "id"
 
     def retrieve(self, request, *args, **kwargs):
@@ -112,6 +114,8 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         # the database.
         id = kwargs.get('pk', None)
         user = User.objects.get(pk=id, is_active=True)
+
+        self.check_object_permissions(request, user)
 
         # This will trigger the overridden update() method of the UserSerializer
         # Pass in the retrieved user from the database so that it gets saved
