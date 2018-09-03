@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework import status
 
@@ -9,6 +11,7 @@ from .serializers import ( RegistrationSerializer,
                            LoginSerializer,
                            UserSerializer)
 from .models import User
+from .backends import MyJWTAuthentication
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -81,14 +84,16 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         and GET /api/users/id
     """
     serializer_class = UserSerializer
-    permission_classes= (AllowAny,)
+    authentication_classes = (MyJWTAuthentication,)
+    #permission_classes= (IsAuthenticatedOrReadOnly,)
     lookup_field = "id"
 
-    def retrieve(self, request, pk):
+    def retrieve(self, request, *args, **kwargs):
         """ Gets a user
         """
         try:
-            user = User.objects.get(pk=pk, is_active=True)
+            id = kwargs.get('pk')
+            user = User.objects.get(pk=id, is_active=True)
             return Response({
                 'email': user.email,
                 'name': user.name,
@@ -97,16 +102,20 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
             return Response({"error": "The user you are locating does not exist."},
                               status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request, pk):
+    def update(self, request, *args, **kwargs):
         """ Handles PUT/PATCH /api/users/<pk>/
             Updates a user based on request application/json data and
             primary key id which is a part of the url.
         """
 
+        # Get the pk id in from the url, and use it to get the User from
+        # the database.
+        id = kwargs.get('pk', None)
+        user = User.objects.get(pk=id, is_active=True)
 
-        user = User.objects.get(pk=pk, is_active=True)
-
-        # this will trigger the overridden update() method of the UserSerializer
+        # This will trigger the overridden update() method of the UserSerializer
+        # Pass in the retrieved user from the database so that it gets saved
+        # inside the model serializer's update() method.
         serializer = self.serializer_class(user, data=request.data, partial=True)
 
         # if serializer is valid, return the serializer.data
