@@ -91,16 +91,19 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     lookup_field = "id"
 
     def retrieve(self, request, *args, **kwargs):
-        """ Gets a user
+        """ Gets a user, this will match
+            GET /api/usrers/<pk> requests, as specified in urls.py
         """
         try:
+            # get the id, and use it to find the active user.
             id = kwargs.get('pk')
             user = User.objects.get(pk=id, is_active=True)
-            return Response({
-                'email': user.email,
-                'name': user.name,
-            })
-        except:
+
+            # Only fields specified in the serializer class are returned
+            serializer = self.serializer_class(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
             return Response({"error": "The user you are locating does not exist."},
                               status=status.HTTP_404_NOT_FOUND)
 

@@ -93,9 +93,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',
                   'email',
                   'name',
-                  'password',
-                  'token')
-        read_only_fields = ('token','id','email',)
+                  'password')
+
+        read_only_fields = ('id','email',)
 
     def update(self, instance, validated_data):
         """ Provides logic for updating/partially updating the user.
