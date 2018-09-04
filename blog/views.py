@@ -5,8 +5,10 @@ from rest_framework import permissions
 from rest_framework.permissions import (IsAuthenticated,
                                         AllowAny)
 from rest_framework import status
+from rest_framework.decorators import action
 
 from .serializers import BlogSerializer
+                          #CommentSerializer)
 from user.authentications import MyJWTAuthentication
 from user.permissions import OwnObjectOrReadOnlyPermission
 from .models import Blog
@@ -56,7 +58,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         # self.get_object() automatically gets Blog whose primary key
         # is the pk specified in url.
         blog = self.get_object()
-        print("\n\nblog:", blog,"\n\n")
+
         if blog is None:
             return Response({"error" : "No user found"},
                             status=status.HTTP_404_NOT_FOUND)
@@ -117,3 +119,24 @@ class BlogViewSet(viewsets.ModelViewSet):
         blog.delete()
         serializer = self.serializer_class(blog)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    # @action(detail=False,
+    #         methods=['POST', 'GET'],
+    #         permission_classes=[OwnObjectOrReadOnlyPermission])
+    # def comments(self, request, **kwargs):
+    #
+    #     if request.method == 'POST':
+    #         serializer = CommentSerializer(data=request.data)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             # default status is HTTP_200_OK, so don't need to add kwarg
+    #             return Response(serializer.data)
+    #         else:
+    #             return Response(serializer.error,
+    #                             status=HTTP_400_BAD_REQUEST)
+    #
+    #     elif request.method == 'GET':
+    #         comments = Comment.objects.all()
+    #         serializer = CommentSerializer(comments, many=True)
+    #         return Response(serializer.data)
