@@ -6,6 +6,5 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register('', BlogViewSet, base_name='')
-router.register('<int:pk>', BlogViewSet, base_name='<int:pk>')
 
 urlpatterns = router.urls

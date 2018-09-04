@@ -16,6 +16,10 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     serializer_class = BlogSerializer
     authentication_classes = (MyJWTAuthentication,)
+
+     # All requests use the queryset to retrieve data from etc.
+     # alternatively, use get_queryset() to apply more logic to the queryset.
+    queryset = Blog.objects.all()
     blogs_per_page = 10
 
     def get_permissions(self):
@@ -29,6 +33,7 @@ class BlogViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
 
         if self.action in ['update', 'partial_update', 'destroy']:
+            print("\n\n OwnObject\n\n")
             permission_classes = [OwnObjectOrReadOnlyPermission]
 
         if self.action in ['list', 'retrieve']:
@@ -36,17 +41,33 @@ class BlogViewSet(viewsets.ModelViewSet):
 
         return [permission() for permission in permission_classes]
 
-    def get_queryset(self):
-        """ Matches GET /api/blogs/ and GET /api/blogs/?page=_
+    # def get_queryset(self):
+    #     """ For every requests, get_queryset() will get executed FIRST,
+    #         then, whatever database operations that proceed will only use
+    #         the returned result of this method.
+    #     """
+    #
+    #     return Blog.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        """ GET /api/blogs/<pk>
         """
-        page = self.request.query_params.get('page')
-        offset = 0 if page is None else ((int(page)-1) * self.blogs_per_page)
-        query = """SELECT * FROM blog_blog
-                   ORDER BY created
-                   LIMIT {0} OFFSET {1}""".format(self.blogs_per_page,
-                                                  offset)
-        blogs = Blog.objects.raw(query)
-        return blogs
+
+        # self.get_object() automatically gets Blog whose primary key
+        # is the pk specified in url.
+        blog = self.get_object()
+        print("\n\nblog:", blog,"\n\n")
+        if blog is None:
+            return Response({"error" : "No user found"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        # Pass Blog object to serializer so only fields
+        # specified in serializer are returned.
+        serializer = self.serializer_class(blog)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)
+
+
 
 
     def create(self, request):
@@ -63,26 +84,36 @@ class BlogViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-    def partial_update(self, request, *args, **kwargs):
-        try:
-            pk= kwargs.get('pk')
-            print('pk:',pk)
-            blog = Blog.objects.get(pk=pk)
-        except Blog.DoesNotExist:
-            return Response({"message": "404 Not Found."},
-                            status=status.HTTP_404_NOT_FOUND)
+    def partial_update(self, request, **kwargs):
+        """ PATCH /api/users/<pk>/
+        """
 
-        serializer = self.serializer_class(blog, data=request.data)
+        # self.get_object() is the blog whose primary key is specified
+        # in the URL
+        blog = self.get_object()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,
-                            status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        # Content and title are either the value provided in the request,
+        # or the current value (if new value isn't supplied in the request)
+        blog.content = request.data.get('content', blog.content)
+        blog.title = request.data.get('title', blog.title)
+        blog.save()
 
+        serializer = self.serializer_class(blog)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)
 
+    def destroy(self, request, **kwargs):
+        """ DELETE /api/users/<pk>/
+        """
 
-    # def retrieve(self, request, pk=None):
-    #     pass
+        # The blog whose primary key is <pk> in the url
+        blog = self.get_object()
+
+        if blog is None:
+            return Response({"error": "Blog does note exist"},
+                             status=status.HTTP_404_NOT_FOUND)
+
+        # Delete and return the deleted blog as response.
+        blog.delete()
+        serializer = self.serializer_class(blog)
+        return Response(serializer.data, status=status.HTTP_200_OK)

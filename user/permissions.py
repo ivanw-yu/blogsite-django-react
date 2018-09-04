@@ -31,13 +31,13 @@ class OwnObjectOrReadOnlyPermission(permissions.BasePermission):
         if request.user is None:
             return False
 
-        # grab the user from the request.
-        id = request.user.id
+        if not hasattr(request.user,'id'):
+            return False
 
         # check if user has permission to manipulate resource by comparing
         # the object model instance's user id to the user id from the request.
-        id = object.user
-        return object.user == user.id
+
+        return object.user == request.user
 
 
 class OwnSelfOrReadOnlyPermission(permissions.BasePermission):
