@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django_filters',
     'user',
     'blog',
-    'comment'
+    'comment',
+    'blog_image',
+    'user_profile'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +140,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# This specifies the directory in which users can upload files/images
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
