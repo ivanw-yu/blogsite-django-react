@@ -10,6 +10,7 @@ class BlogSerializer(serializers.ModelSerializer):
                   'user',
                   'id',
                   'created',
-                  'edited')
+                  'edited',
+                  'view_count')
 
         read_only_fields = ('created', 'edited')

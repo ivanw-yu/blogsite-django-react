@@ -6,23 +6,57 @@ from rest_framework.permissions import (IsAuthenticated,
                                         AllowAny)
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import BlogSerializer
-                          #CommentSerializer)
 from user.authentications import MyJWTAuthentication
 from user.permissions import OwnObjectOrReadOnlyPermission
 from .models import Blog
+from .paginations import CustomPagination
 
 # Create your views here.
 class BlogViewSet(viewsets.ModelViewSet):
 
     serializer_class = BlogSerializer
     authentication_classes = (MyJWTAuthentication,)
+    pagination_class = CustomPagination
 
-     # All requests use the queryset to retrieve data from etc.
-     # alternatively, use get_queryset() to apply more logic to the queryset.
+    # The following filter backends assignment will allow the endpoints:
+    # /api/blogs/?fieldname=_  - due to DjangoFilterBackend
+    #
+    # /api/blogs/?search=_     - due to SeachFilter, and
+    #                            this is searched via search_fields property
+    #
+    # /api/blogs/?ordering=_   - due to OrderingFilter. ordering_fields
+    #                            will specify which fields can be used to sort.
+    #                            orderings field is default ordering if not
+    #                            specified in query string.
+    #                            Puttng "-" in front of the value for "ordering"
+    #                            on the query string will sort descending
+    #                            order. Ex: /api/blogs/?ordering=-title
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter)
+
+    # /api/blogs/?search=_ where _ is the value used to search
+    # title, content and user's name in a partial case insensitive match
+    search_fields = ('title', 'content', 'user__name')
+
+    # /api/blogs/?ordering=_ where _ is the field used for sorting.
+    # add "-" infront of field name on the query string to sort descendingly.
+    # ordering field is the default field to sort with; putting "-" in front of
+    # field name on url means descending order. In this case, it is view_count.
+    # /api/blogs/?ordering=title,view  will sort in title,
+    # then sort in number of views.
+    ordering_fields = ('title', 'content','view_count', 'created')
+    ordering = ('view_count')
+
+
+    # All requests use the queryset to retrieve data from etc.
+    # alternatively, use get_queryset() to apply more logic to the queryset.
     queryset = Blog.objects.all()
-    blogs_per_page = 10
+
 
     def get_permissions(self):
         """ Used to apply different permissions per methods in viewset.
@@ -38,7 +72,7 @@ class BlogViewSet(viewsets.ModelViewSet):
             print("\n\n OwnObject\n\n")
             permission_classes = [OwnObjectOrReadOnlyPermission]
 
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'view_count']:
             permission_classes = [AllowAny]
 
         return [permission() for permission in permission_classes]
@@ -119,6 +153,21 @@ class BlogViewSet(viewsets.ModelViewSet):
         blog.delete()
         serializer = self.serializer_class(blog)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    # detail=True means match /api/blogs/<pk>/view_count/
+    # with the primary key id included in url.
+    @action(detail=True,
+            methods=['PATCH'])
+    def view_count(self, request, **kwargs):
+        """ PATCH /api/blogs/<pk>/view_count
+            Increments the view_count of the Blog object.
+        """
+        blog = self.get_object()
+        blog.view_count += 1
+        blog.save()
+        serializer = self.serializer_class(blog)
+        return Response(serializer.data)
 
 
     # @action(detail=False,

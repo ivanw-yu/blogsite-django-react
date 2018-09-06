@@ -1,6 +1,7 @@
 from django.db import models
 
 from user.models import User
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 class Blog(models.Model):
@@ -13,6 +14,8 @@ class Blog(models.Model):
     user = models.ForeignKey(User,
                                 on_delete=models.CASCADE
                                 )
+    view_count = models.BigIntegerField(default=0,
+                                        validators=[MinValueValidator(0)])
 
 
     def __str__(self):
