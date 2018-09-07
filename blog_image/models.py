@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+
 from blog.models import Blog
 
 def create_file_name(instance, file_name):
@@ -11,13 +13,20 @@ class BlogImage(models.Model):
     image = models.ImageField(upload_to=create_file_name)
     blog = models.ForeignKey(Blog,
                             on_delete=models.CASCADE)
+    order = models.IntegerField(validators = [MinValueValidator(0)],
+                                default=0)
+
 
     def save(self, *args, **kwargs):
+        """ save method is overriden for the purpose of getting the id of the
+            BlogImage (after the first save), and then using that id to
+            name the file.
+        """
+        # if self.id is None, need to save first so that it can be accessible.
         if self.id is None:
             saved_image = self.image
             self.image = None
-            super(BlogImage, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
             self.image = saved_image
-            #kwargs.pop('force_insert')
 
-        super(BlogImage, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

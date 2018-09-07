@@ -14,13 +14,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User,
                                 on_delete=models.CASCADE)
     bio = models.CharField(max_length=600)
-
-    def save(self, *args, **kwargs):
-        if self.id is None:
-            temp_image = self.image
-            self.image = None
-            super(Profile, self).save(*args, **kwargs)
-            self.image = temp_image
-            #kwargs.pop('force_insert')
-
-            super(Profile, self).save(*args, **kwargs)
+    # 
+    # def save(self, *args, **kwargs):
+    #     if (self.id is None) and self.image:
+    #         temp_image = self.image
+    #         self.image = None
+    #         super().save(*args, **kwargs)
+    #         self.image = temp_image
+    #
+    #         super().save(*args, **kwargs)
