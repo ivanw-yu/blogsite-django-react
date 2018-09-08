@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 
 from blog.models import Blog
+from user.models import User
 
 def create_file_name(instance, file_name):
     print("\n\n\n instance:{0} | {1}\n\n\n".format(instance.blog.id, instance.id))
@@ -15,7 +16,8 @@ class BlogImage(models.Model):
                             on_delete=models.CASCADE)
     order = models.IntegerField(validators = [MinValueValidator(0)],
                                 default=0)
-
+    user = models.ForeignKey(User,
+                                on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         """ save method is overriden for the purpose of getting the id of the
