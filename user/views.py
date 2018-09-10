@@ -31,9 +31,20 @@ class RegistrationAPIView(APIView):
              email, name and password.
          """
 
+         # First, check if the 2 password matches.
+         password = request.data.get('password', None)
+         confirmPassword = request.data.get('confirmPassword', None)
+
+         if password != confirmPassword:
+             return Response({'password' :
+                    ['Please make sure you confirm password properly.']
+            }, status=status.HTTP_400_BAD_REQUEST)
+
          # pass data to the serializer. If there are any missing data
          # or invalid datas (based on the model serializer fields) the
          # is_valid() will be false.
+
+         print('about to save', request.data)
 
          serializer = self.serializer_class(data=request.data)
          if serializer.is_valid():
