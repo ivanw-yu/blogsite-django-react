@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import ( RetrieveUpdateAPIView,
+                                      ListAPIView )
 from rest_framework import status
 
 from .serializers import ( RegistrationSerializer,
@@ -96,6 +97,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     """ Handles PUT or PATCH /api/users/id
         and GET /api/users/id
     """
+    query_set = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (MyJWTAuthentication,)
     permission_classes= (OwnSelfOrReadOnlyPermission,)
@@ -108,8 +110,13 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         try:
             # get the id, and use it to find the active user.
             id = kwargs.get('pk')
-            user = User.objects.get(pk=id, is_active=True)
 
+            if id:
+                user = User.objects.get(pk=id, is_active=True)
+            else:
+                user = User.objects.all()
+            #profile = user.profile
+            #print("PROFILE:", profile,"\n\n")
             # Only fields specified in the serializer class are returned
             serializer = self.serializer_class(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -145,3 +152,21 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
                             status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserListAPIView(ListAPIView):
+    """ UserList APIView will be used to get a list of users only,
+        not single users.
+    """
+    serializer_class = UserSerializer
+
+    def list(self, request, *args, **kwargs):
+
+        users = User.objects.all()
+        serializer = self.serializer_class(users, many=True)
+
+        if users.count() > 0:
+            return Response(serializer.data,
+                            status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_404_NOT_FOUND)

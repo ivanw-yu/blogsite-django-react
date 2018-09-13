@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 
 from .models import UserProfile
 from .serializers import UserProfileSerializer
@@ -12,6 +15,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     authentication_classes = [MyJWTAuthentication]
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('user',)
 
     def get_permissions(self):
         if self.action == 'create':
@@ -21,6 +26,3 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
-
-    # def partial_update(self, request, *args, **kwargs)
-    #

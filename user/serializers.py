@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+
 from .models import User
+from user_profile.serializers import UserProfileSerializer
 
 class RegistrationSerializer(serializers.ModelSerializer):
     """ RegistrationSerializer is used to validate user data
@@ -38,6 +40,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
+    """ LoginSerializer differs from UserSerializer
+        in that it returns the user name, email and token only
+        once data is validated. Profile is not returned.
+    """
+
     email = serializers.CharField(max_length=300)
     password = serializers.CharField(min_length=5,
                                      max_length=50,
@@ -77,7 +84,7 @@ class LoginSerializer(serializers.Serializer):
             'token': user.token
         }
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """ Responsible for updating user fields and
         retrieving a single user.
     """
@@ -88,12 +95,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(min_length=8,
                                      max_length=128,
                                      write_only=True)
+
+    # instead of returning the id of the OneToOneField UserProfile,
+    # this allows retrieval of the entire UserProfile object.
+    profile = UserProfileSerializer()
+
     class Meta:
         model = User
         fields = ('id',
                   'email',
                   'name',
-                  'password')
+                  'password',
+                  'profile')
 
         read_only_fields = ('id','email',)
 
