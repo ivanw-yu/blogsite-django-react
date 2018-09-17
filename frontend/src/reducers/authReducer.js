@@ -2,14 +2,15 @@ import { REGISTER_USER,
          SET_CURRENT_USER } from '../actions/types';
 
 // initial states for the auth application state.
-const initialStates = {
+const initialState = {
   user: {},
   isAuthenticated: false
 }
 
-export default function(state = initialStates, action){
-  switch(action.types){
+export default function(state = initialState, action){
+  switch(action.type){
     case SET_CURRENT_USER:
+      console.log("SET_CURRENT_USER payload", action.payload);
       return { ...state,
                user: action.payload,
                isAuthenticated: action.payload !== null &&

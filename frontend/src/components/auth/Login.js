@@ -20,7 +20,8 @@ class Login extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.auth && nextProps.isAuthenticated){
+    if(nextProps.auth && nextProps.auth.isAuthenticated){
+      console.log("login success", nextProps);
        this.props.history.push('/dashboard');
     }
     if(nextProps.auth && nextProps.errors){
@@ -30,24 +31,28 @@ class Login extends Component{
 
   render(){
     return (
-      <div className = "form-box" >
-        <h1> Login </h1>
-        <p> Please enter your email and password to access your account. </p>
-        <form onSubmit = { this.onSubmit } >
-          <TextInputGroup name = "email"
-                          type = "text"
-                          placeholder = "Email"
-                          value = { this.state.email }
-                          onChange = { this.onChange }
-                          />
-          <TextInputGroup name = "password"
-                          type = "password"
-                          placeholder = "Password"
-                          value = { this.state.password }
-                          onChange = { this.onChange }
-                          />
-          <button className = "theme-button"> Submit </button>
-        </form>
+      <div className = "form-box-background" >
+        <div className = "form-box">
+          <h1> Login </h1>
+          <p> Please enter your email and password to access your account. </p>
+          <form onSubmit = { this.onSubmit } >
+            <TextInputGroup name = "email"
+                            type = "text"
+                            placeholder = "Email"
+                            value = { this.state.email }
+                            onChange = { this.onChange }
+                            label = "Email"
+                            />
+            <TextInputGroup name = "password"
+                            type = "password"
+                            placeholder = "Password"
+                            value = { this.state.password }
+                            onChange = { this.onChange }
+                            label = "Password"
+                            />
+            <button className = "theme-button"> Submit </button>
+          </form>
+        </div>
       </div>
     );
   }

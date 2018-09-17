@@ -142,4 +142,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # This specifies the directory in which users can upload files/images
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# The directory specified is accessible by the frontend React components.
+MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend/public/media')

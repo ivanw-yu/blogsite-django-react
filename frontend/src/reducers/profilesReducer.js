@@ -1,7 +1,12 @@
 import {GET_PROFILE,
         GET_PROFILE_LIST} from '../actions/types';
 
-export default function(state = null, action){
+const initialState = {
+  profile: null,
+  profiles: null
+}
+
+export default function(state = initialState, action){
   switch(action.type){
     case GET_PROFILE:
       return {...state,

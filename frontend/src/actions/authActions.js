@@ -36,7 +36,7 @@ export const loginUser = (userData) => async dispatch => {
 
 
     localStorage.setItem('token', token);
-    localStorage.setItem('user', user);
+    localStorage.setItem('user', JSON.stringify(user));
     dispatch({ type: SET_CURRENT_USER,
                payload: user });
   }catch(error){

@@ -43,48 +43,50 @@ class Register extends Component{
     const { errors } = this.state;
 
     return (
-      <div className = "form-box" >
-      <h1> Sign Up </h1>
-      <p> Please fill the required fields to create your account </p>
-      <form onSubmit = {this.onSubmit} >
+      <div className = "form-box-background" >
+        <div className = "form-box">
+          <h1> Sign Up </h1>
+          <p> Please fill the required fields to create your account </p>
+          <form onSubmit = {this.onSubmit} >
 
-        <TextInputGroup name = "name"
-                        type = "text"
-                        value = {this.state.name}
-                        placeholder = "Your name"
-                        label = "Name"
-                        onChange = {this.onChange}
-                        error = {errors && errors.name}
-                        />
+            <TextInputGroup name = "name"
+                            type = "text"
+                            value = {this.state.name}
+                            placeholder = "Your name"
+                            label = "Name"
+                            onChange = {this.onChange}
+                            error = {errors && errors.name}
+                            />
 
-        <TextInputGroup name = "email"
-                        type = "text"
-                        value = {this.state.email}
-                        placeholder = "Your email"
-                        label = "Email"
-                        onChange = {this.onChange}
-                        error = {errors && errors.email}
-                        />
+            <TextInputGroup name = "email"
+                            type = "text"
+                            value = {this.state.email}
+                            placeholder = "Your email"
+                            label = "Email"
+                            onChange = {this.onChange}
+                            error = {errors && errors.email}
+                            />
 
-        <TextInputGroup name = "password"
-                        type = "password"
-                        value = {this.state.password}
-                        placeholder = "Your password"
-                        label = "Password"
-                        onChange = {this.onChange}
-                        error = {errors && errors.password}
-                        />
+            <TextInputGroup name = "password"
+                            type = "password"
+                            value = {this.state.password}
+                            placeholder = "Your password"
+                            label = "Password"
+                            onChange = {this.onChange}
+                            error = {errors && errors.password}
+                            />
 
-        <TextInputGroup name = "confirmPassword"
-                        type = "password"
-                        value = {this.state.confirmPassword}
-                        placeholder = "Confirm password"
-                        label = "Confirm Password"
-                        onChange = {this.onChange}
-                        error = {errors && errors.password2}
-                        />
-        <button className = "theme-button" > Submit </button>
-      </form >
+            <TextInputGroup name = "confirmPassword"
+                            type = "password"
+                            value = {this.state.confirmPassword}
+                            placeholder = "Confirm password"
+                            label = "Confirm Password"
+                            onChange = {this.onChange}
+                            error = {errors && errors.password2}
+                            />
+            <button className = "theme-button" > Submit </button>
+          </form >
+        </div>
       </div>
     );
   }

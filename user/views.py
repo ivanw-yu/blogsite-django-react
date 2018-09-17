@@ -160,7 +160,9 @@ class UserListAPIView(ListAPIView):
     serializer_class = UserSerializer
 
     def list(self, request, *args, **kwargs):
-
+        """ GET /api/users/
+            Returns a list of users,
+        """
         users = User.objects.all()
         serializer = self.serializer_class(users, many=True)
 
