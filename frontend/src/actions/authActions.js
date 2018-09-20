@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { GET_ERRORS,
          REGISTER_USER,
-         SET_CURRENT_USER } from './types';
+         SET_CURRENT_USER,
+         LOGOUT_USER } from './types';
 
 const headers = {'Content-Type': 'application/json'};
 
@@ -43,4 +44,14 @@ export const loginUser = (userData) => async dispatch => {
     dispatch({ type: GET_ERRORS,
                payload: error });
   }
+}
+
+// to logout the user, the local storage will be cleared (user and token will
+// be removed from there), and the redux store auth will be reset to its
+// initial state with isAuthenticated set to false, and user being an empty object.
+// the logged out user is then redirected to the login page.
+export const logout = (history) => dispatch => {
+  localStorage.clear();
+  dispatch({ type: LOGOUT_USER });
+  history.push('/login');
 }

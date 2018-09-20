@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter, Route, Switch, withRouter} from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Home from './components/Home';
 import Profile from './components/Profile';
@@ -37,7 +38,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div>
-          <Navbar />
+          <Navbar auth = {this.props.auth} />
           <FlashMessage />
           <Switch>
             <Route path="/profiles" component = {Profile}/>
@@ -55,4 +56,5 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => ({auth: state.auth})
+export default connect(mapStateToProps)(App);

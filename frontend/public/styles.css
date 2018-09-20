@@ -14,7 +14,7 @@
   z-index: 1;
 }
 
-.navbar a{
+.navbar a, .navbar button{
   /* box-sizing: border-box; */
   float: left;
   width: 130px;
@@ -25,9 +25,16 @@
   text-align: center;
 }
 
-.navbar a:hover{
+.navbar button{
+  background: inherit;
+  border: none;
+  font-size: 16px;
+}
+
+.navbar a:hover, .navbar button:hover{
   background-color: #336600;
   border-bottom: 10px solid #ff9900;
+  cursor: pointer;
 }
 
 .navbar-left, .navbar-right{

@@ -1,8 +1,18 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
+import { logout } from '../actions/authActions';
+import { connect } from 'react-redux';
+
+
+// Auth redux state is passed to Navbar as props from
+// parent component App.
 class Navbar extends React.Component{
 
+  constructor(){
+    super();
+    this.logout = this.logout.bind(this);
+  }
   // render(){
   //   return (
   //     <nav className="navbar navbar-default" style = {{backgroundColor: "#003366", color: "white"}} >
@@ -45,6 +55,10 @@ class Navbar extends React.Component{
   //     </nav>
   //   )
   // }
+
+  logout(){
+    this.props.logout(this.props.history);
+  }
   render(){
     return ( <nav className = "navbar" >
               <div className = "navbar-left" >
@@ -58,18 +72,36 @@ class Navbar extends React.Component{
                 </ NavLink >
               </div>
               <div className = "navbar-right" >
-                < NavLink exact
-                          to = "/login">
-                  Login
-                </ NavLink >
-                < NavLink exact
-                          to = "/register">
-                  Sign Up
-                </ NavLink >
+                { this.props.auth.isAuthenticated ?
+                  ( <React.Fragment>
+                      < NavLink exact
+                                to = "/dashboard"
+                                >
+                        Dashboard
+                      </ NavLink >
+                      < button onClick={this.logout}>
+                        Logout
+                      </ button >
+                    </React.Fragment>
+                  )
+                  : (
+                    <React.Fragment>
+                      < NavLink exact
+                                to = "/login">
+                        Login
+                      </ NavLink >
+                      < NavLink exact
+                                to = "/register">
+                        Sign Up
+                      </ NavLink >
+                    </React.Fragment>)
+                }
               </div>
              </nav>
     )
   }
 }
 
-export default Navbar;
+export default withRouter(connect(null, { logout })(Navbar));
+// const mapStateToProps = (state) => ({auth: state.auth})
+// export default connect(mapStateToProps)(Navbar);
