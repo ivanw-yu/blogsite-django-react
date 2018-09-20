@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'blog-project.urls'
+ROOT_URLCONF = 'blog_project.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blog-project.wsgi.application'
+WSGI_APPLICATION = 'blog_project.wsgi.application'
 
 
 # Database
@@ -141,6 +141,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# allows images to be accessed with /media/ prefixed to the
+# path specified in the models.ImageField upload_to argument.
+MEDIA_URL = '/media/'
 # This specifies the directory in which users can upload files/images
 # The directory specified is accessible by the frontend React components.
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend/public/media')

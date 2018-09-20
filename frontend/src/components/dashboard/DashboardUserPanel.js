@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import { NavLink } from 'react-router-dom';
 import { getProfile } from '../../actions/profileActions';
 
 class DashboardUserPanel extends Component{
@@ -16,7 +16,7 @@ class DashboardUserPanel extends Component{
       <div className = "left-full-panel dashboard-user-panel" >
         <ul>
           <li>
-            <img src = { "/media/" + profile.profile.image }
+            <img src = { profile.profile.image }
                  className = "profile-pic"
                  alt = "No Image"/>
             { `${profile.name} (${profile.email})`}
@@ -26,8 +26,38 @@ class DashboardUserPanel extends Component{
             <p>{profile.profile.bio}</p>
           </li>
         </ul>
+        <div className = "dashboard-user-panel-links">
+          <ul>
+            <li>
+              <NavLink exact
+                       to = "/dashboard" >
+                Blogs
+              </NavLink>
+            </li>
+            <li>
+              <NavLink exact
+                       to = "/dashboard/blogs/create" >
+                Create Blog
+              </NavLink>
+            </li>
+            <li>
+              <NavLink exact
+                       to = "/dashboard" >
+                Edit Profile
+              </NavLink>
+            </li>
+            <li>
+              <NavLink exact
+                       to = "/dashboard" >
+                Edit Password
+              </NavLink>
+            </li>
+          </ul>
+        </div>
         { profile ? profile.bio : ''}
         <div className = "image"></div>
+        <div className = "dashboard-user-panel-links">
+        </div>
       </div>
     )
   }

@@ -11,9 +11,11 @@ def create_file_name(instance, file_name):
 
 # Create your models here.
 class BlogImage(models.Model):
-    image = models.ImageField(upload_to=create_file_name)
+    image = models.ImageField(upload_to=create_file_name,
+                              blank=True)
     blog = models.ForeignKey(Blog,
-                            on_delete=models.CASCADE)
+                            on_delete=models.CASCADE,
+                            related_name="image")
     order = models.IntegerField(validators = [MinValueValidator(0)],
                                 default=0)
     user = models.ForeignKey(User,

@@ -38,7 +38,7 @@ class BlogViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        filters.SearchFilter,
                        filters.OrderingFilter)
-
+    filter_fields = ('user',)
     # /api/blogs/?search=_ where _ is the value used to search
     # title, content and user's name in a partial case insensitive match
     search_fields = ('title', 'content', 'user__name')
@@ -68,7 +68,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
 
-        if self.action in ['update', 'partial_update', 'destroy']:
+        if self.action in ['create','update', 'partial_update', 'destroy']:
             print("\n\n OwnObject\n\n")
             permission_classes = [OwnObjectOrReadOnlyPermission]
 
@@ -109,7 +109,8 @@ class BlogViewSet(viewsets.ModelViewSet):
     def create(self, request):
         data = request.data
         id = request.user.id
-        data['user'] = id
+        data['user'] = request.user.id
+        #data['user'] = id
         serializer = BlogSerializer(data=data)
         if serializer.is_valid():
             serializer.save()

@@ -6,9 +6,11 @@ export const GET_BLOG = 'GET_BLOG';
 
 export const GET_BLOG_LIST = 'GET_BLOG_LIST';
 
-export const POST_BLOG = 'POST_BLOG';
-
 export const GET_ERRORS = 'GET_ERROR';
+
+export const GET_SUCCESS_MESSAGE = 'GET_SUCCESS_MESSAGE';
+
+export const RESET_FLASH_MESSAGE = 'RESET_FLASH_MESSAGE';
 
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 

@@ -1,7 +1,11 @@
 import { GET_BLOG,
          GET_BLOG_LIST} from '../actions/types';
 
-export default function(state = null, action){
+const initialState = {
+  blogs: null,
+  blog: null
+}
+export default function(state = initialState, action){
   console.log("action.payload:", action.payload)
   switch(action.type){
     case GET_BLOG:

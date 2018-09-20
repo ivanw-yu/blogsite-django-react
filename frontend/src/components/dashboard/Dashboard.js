@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
+
 import DashboardUserPanel from './DashboardUserPanel';
+import DashboardControl from './DashboardControl';
 
 class Dashboard extends Component {
 
@@ -9,9 +11,7 @@ class Dashboard extends Component {
     return (
       <React.Fragment>
         <DashboardUserPanel />
-        <Switch>
-          <Route path = "/dashboard/blogs" component = {DashboardUserPanel}  />
-        </Switch>
+        <DashboardControl />
       </React.Fragment>
     );
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, withRouter} from 'react-router-dom';
 
 import Home from './components/Home';
 import Profile from './components/Profile';
@@ -11,6 +11,7 @@ import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
+import FlashMessage from './components/flashMessage/FlashMessage';
 import PrivateRoute from './components/auth/PrivateRoute';
 
 // used to check whether the token and user in the localStorage
@@ -37,6 +38,7 @@ class App extends Component {
       <BrowserRouter>
         <div>
           <Navbar />
+          <FlashMessage />
           <Switch>
             <Route path="/profiles" component = {Profile}/>
             <Route path="/blogs" component = {BlogList} />

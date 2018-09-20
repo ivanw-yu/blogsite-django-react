@@ -88,19 +88,114 @@
 
 .left-full-panel{
   float: left;
-  padding: 25px;
-  width: 300px;
 }
 
 .dashboard-user-panel{
   text-align: center;
   background-color: grey;
+  width: 25%;
 }
 
 .dashboard-user-panel li{
   list-style-type: none;
 }
 
+.dashboard-control{
+  padding: 100px 10px 0 10px;
+  width: 70%;
+  float: left;
+}
+
+.dashboard-content{
+  padding: 10px;
+}
+
+.dashboard-control-navbar a{
+  text-decoration: none;
+  border-top: 1px solid blue;
+  border-right: 1px solid blue;
+  border-left: 1px solid blue;
+  border-radius: 10% 10% 0 0;
+  width: 100px;
+  height: 30px;
+  padding: 0 30px;
+  font-size: 24px;
+}
+
+.dashboard-control-navbar-active {
+
+}
+
+.dashboard-user-panel-links li {
+  border: 1px solid black;
+  border-top: none;
+}
+
+.dashboard-user-panel-links li, .dashboard-user-panel-links ul {
+  width: 100%;
+}
+
+.dashboard-user-panel-links a{
+  text-decoration: none;
+  padding: 30px;
+  width: 100%;
+  color: black;
+  display: block; /* allows anchor tag to take up entire width of container*/
+}
+
+.blog-list{
+  width: 100%;
+}
+
+.blog-card{
+  height: 200px;
+  box-shadow: 1px 1px 10px black;
+}
+
+.blog-card:hover{
+  cursor: pointer;
+  opacity: .5;
+}
+
+.blog-card-image{
+  width: 100%;
+  height: 70%;
+}
+
+.card-col{
+    width: 33%;
+    float: left;
+    padding: 30px;
+    margin: 0;
+}
+
+.flash-message{
+  position: fixed;
+  right: -100px;
+  display: none;
+  box-shadow: 1px 1px 10px black;
+  -webkit-transition: ; /* Safari */
+  transition: right 2s;
+}
+
+.flash-message:display{
+  right: 400px;
+}
+
+
 /* * {
   color: red;
 } */
+
+@media only screen and (max-width: 600px){
+
+  /* for responsive dashboard layout*/
+  .dashboard-control, .dashboard-user-panel{
+    width: 100%;
+  }
+
+  .card-col{
+    padding: 5px;
+  }
+
+}
