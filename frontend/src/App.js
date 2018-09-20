@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
+import BlogView from './components/blogs/BlogView';
 import FlashMessage from './components/flashMessage/FlashMessage';
 import PrivateRoute from './components/auth/PrivateRoute';
 
@@ -41,10 +42,11 @@ class App extends Component {
           <Navbar auth = {this.props.auth} />
           <FlashMessage />
           <Switch>
-            <Route path="/profiles" component = {Profile}/>
-            <Route path="/blogs" component = {BlogList} />
-            <Route path="/login" component = {Login} />
-            <Route path="/register" component = {Register} />
+            <Route exact path="/profiles" component = {Profile}/>
+            <Route exact path="/blogs" component = {BlogList} />
+            <Route exact path="/login" component = {Login} />
+            <Route exact path="/register" component = {Register} />
+            <Route exact path = "/blogs/:id" component = {BlogView} />
             <Switch>
               <PrivateRoute path="/dashboard" component = {Dashboard} />
             </Switch>
