@@ -59,3 +59,17 @@ export const postBlog = (blog, history) => async dispatch => {
   }
 
 }
+
+export const editBlog = (blog, history) => async dispatch => {
+  try{
+    const response = axios.patch(`/api/blogs/${blog.id}/`,
+                                 blog,
+                                 authenticationHeaders);
+    dispatch({ type: GET_SUCCESS_MESSAGE,
+               paylod: {successMessage: "Blog edited!"}});
+    history.push("/dashboard");
+  }catch(error){
+    dispatch({type: GET_ERRORS,
+              payload: error});
+  }
+}

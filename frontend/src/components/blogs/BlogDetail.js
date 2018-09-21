@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
 class BlogDetail extends Component{
   render(){
@@ -20,15 +21,19 @@ class BlogDetail extends Component{
     );
   }
 
+
   renderControlLinks(){
     const { blog, user } = this.props;
-    return (user.id === blog.user) && (
+    return (user.id === blog.user) && this.props.history && (
       <div className = "blog-options">
-        <button onClick={() => this.props.history.push(`/dashboard/edit/${blog.id}`) }>Edit</button>
+        <button onClick={ () => { 
+            this.props.history.push(`/dashboard/blogs/edit/${blog.id}`)
+          }
+        } >Edit</button>
         <button onClick={()=>{}}>Delete</button>
       </div>
     );
   }
 }
 
-export default BlogDetail;
+export default withRouter(BlogDetail);

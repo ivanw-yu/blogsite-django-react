@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { getBlogById,
-         postBlog } from '../../actions/blogActions';
+         postBlog,
+         editBlog } from '../../actions/blogActions';
 import DashboardBlogTextArea from './DashboardBlogTextArea';
 import TextInputGroup from '../commons/TextInputGroup';
 
@@ -80,7 +81,12 @@ class DashboardBlogForm extends Component{
       content: this.state.content
     };
 
-    this.props.postBlog(blog, this.props.history);
+    if( this.props.edit ){
+      blog.id = this.props.blog.id;
+      this.props.editBlog(blog, this.props.history);
+    } else {
+      this.props.postBlog(blog, this.props.history);
+    }
   }
 
   // set props received from global redux store to local state
@@ -118,4 +124,5 @@ class DashboardBlogForm extends Component{
 
 export default withRouter(connect(null,
                                   { getBlogById,
-                                     postBlog })(DashboardBlogForm));
+                                    postBlog,
+                                    editBlog })(DashboardBlogForm));
