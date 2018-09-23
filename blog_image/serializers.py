@@ -12,4 +12,6 @@ class BlogImageSerializer(serializers.ModelSerializer):
         fields = ( 'user',
                    'blog',
                    'image',
-                   'order' )
+                   'order',
+                   'id' )
+        read_only_fields = ('id',)

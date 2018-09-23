@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { getBlogById } from '../../actions/blogActions';
 import DashboardBlogForm from './DashboardBlogForm';
 
-class DashboardBlogFormArea extends Component {
+class DashboardEditBlogFormArea extends Component {
 
   componentDidMount(){
     if(this.props.match.params.id && this.props.edit)
@@ -46,4 +46,4 @@ const mapStateToProps = (state) => (
 );
 
 export default withRouter( connect(mapStateToProps,
-                                  { getBlogById } )( DashboardBlogFormArea ) );
+                                  { getBlogById } )( DashboardEditBlogFormArea ) );

@@ -26,37 +26,13 @@ class DashboardBlogForm extends Component{
     this.state = {
       title: props.blog ? props.blog.title : '',
       content: props.blog ? props.blog.content : '',
-      images: props.blog ? props.blog.images : [null]
+      images: props.blog ? props.blog.image : []
     }
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onImageChange = this.onImageChange.bind(this);
   }
-
-  // this will execute when changing urls from /dashboard/blogs/create to
-  // /dashboard/blogs/edit/:id and vice versa. In such case, this component
-  // won't unmount (i.e. componentWillMount() doesn't trigger), this is why
-  // reseting the states in componentDidUpdate() is necessary this way.
-  // componentDidUpdate(prevProps){
-  //   if(prevProps.edit == true && this.props.edit == false){
-  //     this.setState({title: '',
-  //                    content: '',
-  //                    images: []});
-  //   } else if (prevProps.edit == false && this.props.edit == true ){
-  //     this.setState({title: this.props.title,
-  //                    content: this.props.content,
-  //                    images: this.props.images});
-  //   }
-  // }
-
-  // componentDidUpdate(){
-  //   // if the blog does not belong to the user, then redirect to the dashboard.
-  //   if((this.props.blog) &&
-  //       this.props.blog.user.id != this.props.auth.user.id){
-  //     this.props.history.push("/dashboard");
-  //   }
-  // }
 
   onChange(event){
     this.setState({ [event.target.name] : event.target.value })
@@ -80,16 +56,8 @@ class DashboardBlogForm extends Component{
     }
   }
 
-  // set props received from global redux store to local state
-  // static getDerivedStateFromProps(nextProps, prevProps){
-  //   console.log("NEXTPROPS:",nextProps);
-  //   if(nextProps.blog)
-  //     this.setState({title: nextProps.blog.title,
-  //                    content: nextProps.blog.content})
-  // }
-
   render(){
-    //console.log(this.state.images[0]);
+
     return (
       <div className = "dashboard-form-div">
         <h1> { this.props.edit ? `Edit "${this.state.title}".` : 'Upload New Blog'} </h1>
@@ -103,7 +71,14 @@ class DashboardBlogForm extends Component{
                  name="image"
                  accept="image/*"
                  onChange={this.onImageChange} />
-          <div id="preview" />
+          <div id="preview" >
+           {this.state.images && this.state.images.length && (
+             <img src = {this.state.images[0].image}
+                  style={{width: '100px',
+                          height: '100px'}}
+                          />
+           )}
+          </div>
           <DashboardBlogTextArea name= "content"
                                  content={ this.state.content }
                                  onChange = {this.onChange} />
@@ -127,7 +102,8 @@ class DashboardBlogForm extends Component{
         //console.log(buffer.toString());
         document.getElementById('preview').innerHTML = '<img src = "' + e.target.result
                                                      + '" style = "width: 100px; height: 100px" />';
-        this.setState({images: [e.target.result]});
+        // only 1 image for now.
+        this.setState({images: [{id: null, imageFile: e.target.result}]});
       }
 
       fileReader.readAsDataURL(file);

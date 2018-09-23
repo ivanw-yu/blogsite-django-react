@@ -57,7 +57,7 @@ export const postBlog = (blog, history) => async dispatch => {
     // after the blog has been created, create images associated with it.
     for(let image of blog.images){
       let postBlogImageResponse = await axios.post('/api/blog_images/',
-                                                      { image,
+                                                      { image: image.imageFile,
                                                          blog: blogId },
                                                       authenticationHeaders);
     }
@@ -86,9 +86,35 @@ export const postBlog = (blog, history) => async dispatch => {
 
 export const editBlog = (blog, history) => async dispatch => {
   try{
+
+    // edit the title and content of the blog first.
+    const data = {
+      title: blog.title,
+      content: blog.content
+    }
     const response = await axios.patch(`/api/blogs/${blog.id}/`,
-                                 blog,
+                                 data,
                                  authenticationHeaders);
+
+    // delete/patch blog images that were on the current blog,
+    // but not on the new blog. For now, only 1 image allowed per blog,
+    // so that image will be the one that will be replaced.
+
+    const images = response.data.image;
+    console.log("images:", images);
+    const newImagesHasPrevId = blog.images
+                                   .map(e => e.id)
+                                   .indexOf(images[0].id);
+
+    console.log("newImagesHasPrevId", newImagesHasPrevId);
+    // if the newImages in the request does not contain id of blog image,
+    // patch the blog image with the new one.
+    if(newImagesHasPrevId < 0){
+      const patchImageResponse = await axios.patch(`/api/blog_images/${images[0].id}/`,
+                                                   { image: blog.images[0].imageFile },
+                                                   authenticationHeaders);
+    }
+
     dispatch({ type: GET_SUCCESS_MESSAGE,
                paylod: {successMessage: "Blog edited!"}});
     history.push("/dashboard");

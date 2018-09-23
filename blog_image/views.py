@@ -10,7 +10,6 @@ from .serializers import BlogImageSerializer
 from .models import BlogImage
 from user.permissions import OwnObjectOrReadOnlyPermission
 from user.authentications import MyJWTAuthentication
-from .forms import ImageUploadForm
 
 from django.core.files.base import ContentFile
 import base64
