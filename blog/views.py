@@ -14,6 +14,7 @@ from user.authentications import MyJWTAuthentication
 from user.permissions import OwnObjectOrReadOnlyPermission
 from .models import Blog
 from .paginations import CustomPagination
+from blog_image.models import BlogImage
 
 # Create your views here.
 class BlogViewSet(viewsets.ModelViewSet):
@@ -110,10 +111,15 @@ class BlogViewSet(viewsets.ModelViewSet):
         data = request.data
         id = request.user.id
         data['user'] = request.user.id
+
         #data['user'] = id
         serializer = BlogSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            # Continue here, save image
+            # for image in request.data.image:
+            #     newImage = BlogImage(user=id,
+            #                          blog=)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
         else:
@@ -169,6 +175,11 @@ class BlogViewSet(viewsets.ModelViewSet):
         blog.save()
         serializer = self.serializer_class(blog)
         return Response(serializer.data)
+
+    # @action(detail=True,
+    #         methods=['POST'])
+    # def images(self, request, **kwargs):
+    #
 
 
     # @action(detail=False,

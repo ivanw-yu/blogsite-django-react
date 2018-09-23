@@ -8,7 +8,10 @@ class DashboardBlogTextArea extends Component{
         <div className = "dashboard-blog-form-buttons-area">
           <button> Upload Image </button>
         </div>
-        <textarea name="content"
+        <label>Content</label>
+        <br />
+        <textarea className = "textarea-field"
+                  name="content"
                   onChange={this.props.onChange}
                   value={this.props.content}></textarea>
       </div>

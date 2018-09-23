@@ -47,9 +47,20 @@ export const getBlogById = (id) => async dispatch => {
 
 export const postBlog = (blog, history) => async dispatch => {
   try{
-    const response = axios.post('/api/blogs/',
+    const newBlog = { title: blog.title,
+                      content: blog.content };
+    const response = await axios.post('/api/blogs/',
                                 blog,
                                 authenticationHeaders);
+    const blogId = response.data.id;
+
+    // after the blog has been created, create images associated with it.
+    for(let image of blog.images){
+      let postBlogImageResponse = await axios.post('/api/blog_images/',
+                                                      { image,
+                                                         blog: blogId },
+                                                      authenticationHeaders);
+    }
     dispatch({type: GET_SUCCESS_MESSAGE,
               payload: {successMessage: "Blog created!"}});
     history.push("/dashboard");
@@ -57,12 +68,25 @@ export const postBlog = (blog, history) => async dispatch => {
     dispatch({type: GET_ERRORS,
               payload: error});
   }
-
 }
+
+// export const postBlogImage = (blog, userId) => async dispatch => {
+//   try{
+//     const response = await axios.post('/api/blogs/',
+//                                 blog,
+//                                 authenticationHeaders);
+//     dispatch({type: GET_SUCCESS_MESSAGE,
+//               payload: {successMessage: "Blog created!"}});
+//     history.push("/dashboard");
+//   }catch(error){
+//     dispatch({type: GET_ERRORS,
+//               payload: error});
+//   }
+// }
 
 export const editBlog = (blog, history) => async dispatch => {
   try{
-    const response = axios.patch(`/api/blogs/${blog.id}/`,
+    const response = await axios.patch(`/api/blogs/${blog.id}/`,
                                  blog,
                                  authenticationHeaders);
     dispatch({ type: GET_SUCCESS_MESSAGE,

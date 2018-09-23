@@ -4,13 +4,13 @@ import { withRouter } from 'react-router-dom';
 class BlogDetail extends Component{
   render(){
     const { blog } = this.props;
-    return this.props.blog && (
+    return this.props.blog && this.props.user && (
       <div className = "blog-view">
         {this.renderControlLinks()}
         <h1> {blog.title} </h1>
         <div style={{width: "100%",
                      textAlign: "center"}} >
-          {blog.image && <img src ={blog.image[0].image}
+          {blog.image.length && <img src ={blog.image[0].image}
                               style={{height: "400px",
                                       width: "100%"}}/>}
         </div>
@@ -26,7 +26,7 @@ class BlogDetail extends Component{
     const { blog, user } = this.props;
     return (user.id === blog.user) && this.props.history && (
       <div className = "blog-options">
-        <button onClick={ () => { 
+        <button onClick={ () => {
             this.props.history.push(`/dashboard/blogs/edit/${blog.id}`)
           }
         } >Edit</button>

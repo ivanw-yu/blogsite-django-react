@@ -193,6 +193,17 @@
   padding: 100px;
 }
 
+.textarea-field{
+  width: 100%;
+  height: 300px;
+  font-size: 24px;
+}
+
+.dashboard-form-div{
+  box-shadow: 1px 1px 10px black;
+  padding: 30px;
+}
+
 /* * {
   color: red;
 } */

@@ -5,11 +5,9 @@ from blog.models import Blog
 from user.models import User
 
 def create_file_name(instance, file_name):
-    print("\n\n\n instance:{0} | {1}\n\n\n".format(instance.blog.id, instance.id))
     extension= file_name.split(".")[-1]
     return "images/blog{0}pic{1}.{2}".format( instance.blog.id,instance.id, extension)
 
-# Create your models here.
 class BlogImage(models.Model):
     image = models.ImageField(upload_to=create_file_name,
                               blank=True)
@@ -31,6 +29,12 @@ class BlogImage(models.Model):
             saved_image = self.image
             self.image = None
             super().save(*args, **kwargs)
-            self.image = saved_image
 
-        super().save(*args, **kwargs)
+            # then, save the image,
+            # use self.save() instead of super().save()
+            # in order to update the newly created blog image.
+            self.image = saved_image
+            self.save()
+            # This will cause integrity error: super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)

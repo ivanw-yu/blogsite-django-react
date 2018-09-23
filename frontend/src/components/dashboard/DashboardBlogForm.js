@@ -10,55 +10,45 @@ import TextInputGroup from '../commons/TextInputGroup';
 
 
 /*
-  DashboardBlogForm is a child component of DashboardBlogFormArea.
-  A blog prop will be passed to DashboardBlogForm,
-  which contains the
+  DashboardBlogForm is a child component of
+  DashboardCreateBlogFormArea and DashboardEditBlogFormArea.
+  Props that are passed from parent components are: blog, and
+  edit (boolean, true for editing a blog, false for creating blog).
 */
 class DashboardBlogForm extends Component{
 
   constructor(props){
     super(props);
-    //console.log("BLOGFORM PROPS",props, this.props)
+
+    // initial states are either the passed in blog (if any)
+    // or default values (empty string for title and content, empty
+    // array for images).
     this.state = {
-      title: props.blog.title || '',
-      content: props.blog.content || '',
-      images: props.blog.images || []
+      title: props.blog ? props.blog.title : '',
+      content: props.blog ? props.blog.content : '',
+      images: props.blog ? props.blog.images : [null]
     }
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  componentDidMount(){
-    console.log("componentDidMount", this.props);
-    // this.setState({
-    //   title: this.props.title,
-    //   content: this.props.content,
-    //   images: this.props.images
-    // });
-    // if(this.props.match.params.id)
-    //   this.props.getBlogById(this.props.match.params.id);
-  }
-
-  componentWillUnmount(){
-    console.log("@##@#@#@#UNMOUNTING UNMOUNTING UNMOUNTING@@!#@!#!#@!#");
+    this.onImageChange = this.onImageChange.bind(this);
   }
 
   // this will execute when changing urls from /dashboard/blogs/create to
   // /dashboard/blogs/edit/:id and vice versa. In such case, this component
   // won't unmount (i.e. componentWillMount() doesn't trigger), this is why
   // reseting the states in componentDidUpdate() is necessary this way.
-  componentDidUpdate(prevProps){
-    if(prevProps.edit == true && this.props.edit == false){
-      this.setState({title: '',
-                     content: '',
-                     images: []});
-    } else if (prevProps.edit == false && this.props.edit == true ){
-      this.setState({title: this.props.title,
-                     content: this.props.content,
-                     images: this.props.images});
-    }
-  }
+  // componentDidUpdate(prevProps){
+  //   if(prevProps.edit == true && this.props.edit == false){
+  //     this.setState({title: '',
+  //                    content: '',
+  //                    images: []});
+  //   } else if (prevProps.edit == false && this.props.edit == true ){
+  //     this.setState({title: this.props.title,
+  //                    content: this.props.content,
+  //                    images: this.props.images});
+  //   }
+  // }
 
   // componentDidUpdate(){
   //   // if the blog does not belong to the user, then redirect to the dashboard.
@@ -78,7 +68,8 @@ class DashboardBlogForm extends Component{
     // images upload not implemented yet.
     const blog = {
       title: this.state.title,
-      content: this.state.content
+      content: this.state.content,
+      images: this.state.images
     };
 
     if( this.props.edit ){
@@ -98,7 +89,7 @@ class DashboardBlogForm extends Component{
   // }
 
   render(){
-
+    //console.log(this.state.images[0]);
     return (
       <div className = "dashboard-form-div">
         <h1> { this.props.edit ? `Edit "${this.state.title}".` : 'Upload New Blog'} </h1>
@@ -107,6 +98,12 @@ class DashboardBlogForm extends Component{
                           label = "title"
                           onChange = {this.onChange}
                           value = { this.state.title } />
+          <label>Upload Image</label><br />
+          <input type="file"
+                 name="image"
+                 accept="image/*"
+                 onChange={this.onImageChange} />
+          <div id="preview" />
           <DashboardBlogTextArea name= "content"
                                  content={ this.state.content }
                                  onChange = {this.onChange} />
@@ -115,7 +112,34 @@ class DashboardBlogForm extends Component{
       </div>
     );
   }
+
+  onImageChange(event){
+    var file = event.target.files[0];
+    if(file){
+      var fileReader = new FileReader();
+
+      fileReader.onload = (e) => {
+        console.log('images0: ', this.state.images[0]);
+
+        // console.log(e.target.result);
+        // var data = e.target.result.replace(/^data:image\/\w+;base64,/, "");
+        // var buffer= new Buffer(data, 'base64');
+        //console.log(buffer.toString());
+        document.getElementById('preview').innerHTML = '<img src = "' + e.target.result
+                                                     + '" style = "width: 100px; height: 100px" />';
+        this.setState({images: [e.target.result]});
+      }
+
+      fileReader.readAsDataURL(file);
+    }else{
+      console.log('unable to read file');
+    }
+  }
 }
+
+DashboardBlogForm.defaultProps = {
+  edit: false
+};
 
 // const mapStateToProps = (state) => (
 //   { blog: state.blogs.blog,

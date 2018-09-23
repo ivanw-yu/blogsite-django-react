@@ -8,7 +8,8 @@ class DashboardBlogList extends Component {
 
   componentDidMount(){
     const query = { user: this.props.auth.user.id,
-                    page: 1 }
+                    page: 1,
+                    ordering: '-created' }
     this.props.getBlogs(query);
   }
 

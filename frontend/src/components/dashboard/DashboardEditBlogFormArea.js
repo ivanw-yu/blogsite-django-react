@@ -18,32 +18,22 @@ class DashboardBlogFormArea extends Component {
   // that does not exist, or a blog not owned by the user, and if so,
   // user is redirected to their dashboard.
   componentDidUpdate(prevProps){
-    console.log("componentDidUpdate", this.props, prevProps);
+
     const blogDoesNotBelongToUser = ( this.props.blog &&
                                        this.props.user &&
                                        this.props.blog.user !== this.props.user.id );
 
-    const blogDoesNotExist = this.props.error != null;
+    const blogDoesNotExist = this.props.error !== null;
     if( blogDoesNotBelongToUser || blogDoesNotExist ){
          this.props.history.push("/dashboard");
     }
   }
 
   render(){
-    const newBlog = {
-      title: '',
-      content: '',
-      images: []
-    };
-    //console.log("render dashboardblogformarea", blog);
-    return (
+    return ( this.props.blog &&
       <div className = "dashboard-blog-form-area" >
-        { this.props.edit ? ( this.props.blog &&
-            <DashboardBlogForm edit = { this.props.edit }
+            <DashboardBlogForm edit = {true}
                                blog = { this.props.blog } />
-          ) : ( <DashboardBlogForm edit = { this.props.edit }
-                                   blog = { newBlog } /> )
-        }
       </div>
     );
   }
