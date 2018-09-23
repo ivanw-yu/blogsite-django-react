@@ -42,7 +42,7 @@ class DashboardUserPanel extends Component{
             </li>
             <li>
               <NavLink exact
-                       to = "/dashboard" >
+                       to = "/dashboard/profile/edit" >
                 Edit Profile
               </NavLink>
             </li>
