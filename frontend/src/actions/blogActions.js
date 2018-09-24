@@ -22,9 +22,14 @@ export const getBlogs= (query) => async dispatch => {
     // Object.keys makes an array of property names owned by the object only,
     // not inherited properties.
     const queryString = Object.keys(query)
-                              .map( key => `${key}=${query[key]}`)
+                              .map( key => {
+                                // trim the key, and replace spaces with | for regex searching
+                                // on the backend.
+                                return `${key}=${query[key].trim().replace(/[ ]+/, '|')}`
+                              })
                               .join('&');
     console.log('queryString',queryString);
+
     const response = await axios.get(`/api/blogs/?${queryString}`);
     dispatch({type: GET_BLOG_LIST,
               payload: response.data});

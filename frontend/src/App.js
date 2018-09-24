@@ -13,6 +13,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import BlogView from './components/blogs/BlogView';
+import BlogSearch from './components/blogs/BlogSearch';
 import FlashMessage from './components/flashMessage/FlashMessage';
 import PrivateRoute from './components/auth/PrivateRoute';
 
@@ -43,7 +44,7 @@ class App extends Component {
           <FlashMessage />
           <Switch>
             <Route exact path="/profiles" component = {Profile}/>
-            <Route exact path="/blogs" component = {BlogList} />
+            <Route exact path="/blogs" component = {BlogSearch} />
             <Route exact path="/login" component = {Login} />
             <Route exact path="/register" component = {Register} />
             <Route exact path = "/blogs/:id" component = {BlogView} />

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { getProfile } from '../../actions/profileActions';
+import { getUserAndProfileByUserId } from '../../actions/profileActions';
 
 class DashboardUserPanel extends Component{
 
   componentDidMount(){
-    this.props.getProfile(this.props.auth.user.id);
+    this.props.getUserAndProfileByUserId(this.props.auth.user.id);
   }
 
   render(){
@@ -69,4 +69,4 @@ const mapStateToProps = (state) => ({ profile: state.profiles.profile,
 
 
 export default connect( mapStateToProps,
-                        { getProfile } )( DashboardUserPanel );
+                        { getUserAndProfileByUserId } )( DashboardUserPanel );

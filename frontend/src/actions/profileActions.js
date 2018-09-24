@@ -6,7 +6,9 @@ import { GET_PROFILE,
 
 import authenticationHeaders from '../utils/authenticationHeaders';
 
-export const getProfile = (userId) => async dispatch => {
+const URI_PREFIX = '/api/profiles';
+
+export const getUserAndProfileByUserId = (userId) => async dispatch => {
   try{
     const response = await axios(`/api/users/${userId}/`);
     dispatch({type: GET_PROFILE,
@@ -17,12 +19,32 @@ export const getProfile = (userId) => async dispatch => {
   }
 }
 
+export const getProfileByUserId = (userId) => async dispatch => {
+  try{
+    const response = await axios(`${URI_PREFIX}/?user=${userId}`);
+    dispatch({ type: GET_PROFILE,
+               payload: response.data })
+  }catch(error){
+    dispatch({type: GET_ERRORS,
+              payload: error});
+  }
+}
+
 export const editProfile = (profile, history) => async dispatch => {
   try{
-    const response = await axios.patch(`/api/profiles/${profile.id}/`,
-                                        { profile },
-                                        authenticationHeaders);
 
+    let prevProfile = await axios(`${URI_PREFIX}/${profile.id}/`);
+
+    // if the previous image of the profile is the same as the image sent,
+    // delete the image from the profile object, so it is not patched over
+    // through the request.
+    console.log("prevProfile", prevProfile)
+    if(prevProfile.data.image === profile.image)
+      delete profile.image;
+
+    const response = await axios.patch(`${URI_PREFIX}/${profile.id}/`,
+                                        profile,
+                                        authenticationHeaders);
     dispatch({ type: GET_SUCCESS_MESSAGE,
                payload: { successMessage: "Profile successfully updated." } });
     history.push('/dashboard');

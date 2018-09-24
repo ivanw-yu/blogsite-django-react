@@ -41,8 +41,11 @@ class BlogViewSet(viewsets.ModelViewSet):
                        filters.OrderingFilter)
     filter_fields = ('user',)
     # /api/blogs/?search=_ where _ is the value used to search
-    # title, content and user's name in a partial case insensitive match
-    search_fields = ('title', 'content', 'user__name')
+    # without $ prefixed, title, content and user's name is searched
+    # in partial case insensitive match. Adding $ as prefix will allow
+    # search in regex. (searched will be done as ?search=(key1|key2)
+    # so that keywords separated with space are each used to search.
+    search_fields = ('$title', '$content', '$user__name')
 
     # /api/blogs/?ordering=_ where _ is the field used for sorting.
     # add "-" infront of field name on the query string to sort descendingly.

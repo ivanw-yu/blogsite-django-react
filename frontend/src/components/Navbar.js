@@ -3,7 +3,7 @@ import { NavLink, withRouter } from 'react-router-dom';
 
 import { logout } from '../actions/authActions';
 import { connect } from 'react-redux';
-
+import SearchBar from './SearchBar';
 
 // Auth redux state is passed to Navbar as props from
 // parent component App.
@@ -70,6 +70,9 @@ class Navbar extends React.Component{
                           to = "/profiles">
                   Profiles
                 </ NavLink >
+              </div>
+              <div className="navbar-left">
+                < SearchBar />
               </div>
               <div className = "navbar-right" >
                 { this.props.auth.isAuthenticated ?
