@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 class BlogDetail extends Component{
   render(){
+    console.log("BLOG: ", this.props.blog);
     const { blog } = this.props;
     return this.props.blog && this.props.user && (
       <div className = "blog-view">

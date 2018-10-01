@@ -6,7 +6,6 @@ const initialState = {
   blog: null
 }
 export default function(state = initialState, action){
-  console.log("action.payload:", action.payload)
   switch(action.type){
     case GET_BLOG:
       return {...state,

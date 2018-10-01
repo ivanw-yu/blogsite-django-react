@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { getBlogs } from '../actions/blogActions';
+import { getProfiles } from '../actions/profileActions';
 
 class SearchBar extends Component{
   constructor(){
@@ -17,6 +18,7 @@ class SearchBar extends Component{
   }
 
   onChange(event){
+    console.log(event.target.name, event.target.value);
     this.setState({ [event.target.name] : event.target.value });
   }
 
@@ -24,9 +26,12 @@ class SearchBar extends Component{
     event.preventDefault();
     switch(this.state.category){
       case 'Blogs':
-        const key = this.state.searchKey;
         this.props.getBlogs({search: this.state.searchKey});
-        this.props.history.push(`/blogs?search=` + this.state.searchKey);
+        this.props.history.push(`/blogs?search=${this.state.searchKey}`);
+        break;
+      case 'Profiles':
+        this.props.getProfiles({search: this.state.searchKey});
+        this.props.history.push(`/profiles?search=${this.state.searchKey}`);
     }
   }
 
@@ -37,12 +42,13 @@ class SearchBar extends Component{
                       position: "relative"}}>
         <form onSubmit = {this.onSubmit}>
           <select className ="category"
+                  name = "category"
                   onChange={ this.onChange }>
             <option name = "Blogs" default={true}>
               Blogs
             </option>
-            <option name = "Users">
-              Users
+            <option name = "Profiles">
+              Profiles
             </option>
           </select>
 
@@ -60,4 +66,4 @@ class SearchBar extends Component{
 }
 
 export default withRouter(connect(null,
-                                  { getBlogs } )(SearchBar));
+                                  { getBlogs, getProfiles } )(SearchBar));

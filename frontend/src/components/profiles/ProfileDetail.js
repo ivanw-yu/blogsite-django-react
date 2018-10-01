@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 
-import {getProfile} from '../actions';
+import {getProfile} from '../../actions/profileActions';
 
 class ProfileDetail extends Component{
 

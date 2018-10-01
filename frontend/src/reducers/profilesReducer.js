@@ -3,7 +3,7 @@ import {GET_PROFILE,
 
 const initialState = {
   profile: null,
-  profiles: null
+  profiles: []
 }
 
 export default function(state = initialState, action){

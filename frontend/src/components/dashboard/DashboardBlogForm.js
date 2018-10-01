@@ -25,6 +25,7 @@ class DashboardBlogForm extends Component{
     // array for images).
     this.state = {
       title: props.blog ? props.blog.title : '',
+      prevTitle: props.blog && props.blog.title, //used to display title
       content: props.blog ? props.blog.content : '',
       images: props.blog ? props.blog.image : []
     }
@@ -60,7 +61,7 @@ class DashboardBlogForm extends Component{
 
     return (
       <div className = "dashboard-form-div">
-        <h1> { this.props.edit ? `Edit "${this.state.title}".` : 'Upload New Blog'} </h1>
+        <h1> { this.props.edit ? `Edit "${this.state.prevTitle}".` : 'Upload New Blog'} </h1>
         <form onSubmit = {this.onSubmit} >
           <TextInputGroup name = "title"
                           label = "title"
@@ -73,7 +74,7 @@ class DashboardBlogForm extends Component{
                  onChange={this.onImageChange} />
           <div id="preview" >
            {this.state.images && this.state.images.length && (
-             <img src = {this.state.images[0].image}
+             <img src = { this.state.images[0].image || this.state.images[0].imageFile }
                   style={{width: '100px',
                           height: '100px'}}
                           />
@@ -100,8 +101,8 @@ class DashboardBlogForm extends Component{
         // var data = e.target.result.replace(/^data:image\/\w+;base64,/, "");
         // var buffer= new Buffer(data, 'base64');
         //console.log(buffer.toString());
-        document.getElementById('preview').innerHTML = '<img src = "' + e.target.result
-                                                     + '" style = "width: 100px; height: 100px" />';
+        // document.getElementById('preview').innerHTML = '<img src = "' + e.target.result
+        //                                              + '" style = "width: 100px; height: 100px" />';
         // only 1 image for now.
         this.setState({images: [{id: null, imageFile: e.target.result}]});
       }

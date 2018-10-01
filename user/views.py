@@ -7,6 +7,7 @@ from rest_framework.permissions import (AllowAny,
 from rest_framework.generics import ( RetrieveUpdateAPIView,
                                       ListAPIView )
 from rest_framework import status
+from rest_framework import filters
 
 from .serializers import ( RegistrationSerializer,
                            LoginSerializer,
@@ -15,6 +16,7 @@ from .models import User
 from .authentications import MyJWTAuthentication
 from .permissions import (OwnObjectOrReadOnlyPermission,
                           OwnSelfOrReadOnlyPermission)
+from blog_project.paginations import CustomPagination
 
 # Create your views here.
 class RegistrationAPIView(APIView):
@@ -157,18 +159,22 @@ class UserListAPIView(ListAPIView):
     """ UserList APIView will be used to get a list of users only,
         not single users.
     """
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('$name', '$email', '$profile__bio')
+    pagination_class = CustomPagination
 
-    def list(self, request, *args, **kwargs):
-        """ GET /api/users/
-            Returns a list of users,
-        """
-        users = User.objects.all()
-        serializer = self.serializer_class(users, many=True)
-
-        if users.count() > 0:
-            return Response(serializer.data,
-                            status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_404_NOT_FOUND)
+    # def list(self, request, *args, **kwargs):
+    #     """ GET /api/users/
+    #         Returns a list of users,
+    #     """
+    #     users = User.objects.all()
+    #     serializer = self.serializer_class(users, many=True)
+    #
+    #     if users.count() > 0:
+    #         return Response(serializer.data,
+    #                         status=status.HTTP_200_OK)
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_404_NOT_FOUND)

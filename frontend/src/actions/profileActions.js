@@ -30,6 +30,35 @@ export const getProfileByUserId = (userId) => async dispatch => {
   }
 }
 
+export const getProfiles= (query) => async dispatch => {
+
+  try{
+    // Traverse the query object, create a query string
+    // in the format key1=value1&key2=value2..
+    // Object.keys makes an array of property names owned by the object only,
+    // not inherited properties.
+    const queryString = Object.keys(query)
+                              .map( key => {
+                                // trim the key, and replace spaces with | for regex searching
+                                // on the backend.
+                                return `${key}=${query[key].trim().replace(/[ ]+/, '|')}`
+                              })
+                              .join('&');
+    console.log('queryString',queryString);
+
+    // use /api/users instead in order to retrieve the name of user and email
+    // as well as the profile.
+    const response = await axios.get(`/api/users/?${queryString}`);
+    dispatch({type: GET_PROFILE_LIST,
+              payload: response.data});
+  }catch (error){
+    dispatch({type: GET_ERRORS,
+              payload: error});
+  }
+}
+
+export const getProfile = () => {}
+
 export const editProfile = (profile, history) => async dispatch => {
   try{
 

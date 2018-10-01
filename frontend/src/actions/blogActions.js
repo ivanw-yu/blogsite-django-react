@@ -25,7 +25,7 @@ export const getBlogs= (query) => async dispatch => {
                               .map( key => {
                                 // trim the key, and replace spaces with | for regex searching
                                 // on the backend.
-                                return `${key}=${query[key].trim().replace(/[ ]+/, '|')}`
+                                return `${key}=${String(query[key]).trim().replace(/[ ]+/, '|')}`;
                               })
                               .join('&');
     console.log('queryString',queryString);
@@ -100,21 +100,40 @@ export const editBlog = (blog, history) => async dispatch => {
     const response = await axios.patch(`/api/blogs/${blog.id}/`,
                                  data,
                                  authenticationHeaders);
+    console.log("AFTER BLOG PATCH", response.data)
 
     // delete/patch blog images that were on the current blog,
     // but not on the new blog. For now, only 1 image allowed per blog,
     // so that image will be the one that will be replaced.
 
     const images = response.data.image;
-    console.log("images:", images);
-    const newImagesHasPrevId = blog.images
-                                   .map(e => e.id)
-                                   .indexOf(images[0].id);
+    //console.log("images:", images);
+    // if(images.length > 0){
+    //   const newImagesHasPrevId = blog.images
+    //                                  .map(e => e.id)
+    //                                  .indexOf(images[0].id);
+    // }
 
-    console.log("newImagesHasPrevId", newImagesHasPrevId);
-    // if the newImages in the request does not contain id of blog image,
-    // patch the blog image with the new one.
-    if(newImagesHasPrevId < 0){
+    //console.log("newImagesHasPrevId", newImagesHasPrevId);
+
+    if(images.length === 0){
+
+      console.log("posting image");
+      const addImageResponse = await axios.post('/api/blog_images/',
+                                                { image: blog.images[0].imageFile,
+                                                   blog: blog.id },
+                                                authenticationHeaders);
+      console.log("addImageResponse", addImageResponse);
+
+    }else{
+      // if the newImages in the request does not contain id of blog image,
+      // patch the blog image with the new one.
+
+      const newImagesHasPrevId = blog.images
+                                     .map(e => e.id)
+                                     .indexOf(images[0].id);
+
+      console.log("PATCHING IMAGE ", blog.images[0])
       const patchImageResponse = await axios.patch(`/api/blog_images/${images[0].id}/`,
                                                    { image: blog.images[0].imageFile },
                                                    authenticationHeaders);

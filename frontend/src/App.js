@@ -5,9 +5,7 @@ import {BrowserRouter, Route, Switch, withRouter} from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Home from './components/Home';
-import Profile from './components/Profile';
-import Blog from './components/Blog';
-import BlogList from './components/BlogList';
+import ProfileSearch from './components/profiles/ProfileSearch';
 import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -43,7 +41,7 @@ class App extends Component {
           <Navbar auth = {this.props.auth} />
           <FlashMessage />
           <Switch>
-            <Route exact path="/profiles" component = {Profile}/>
+            <Route path="/profiles" component = {ProfileSearch}/>
             <Route exact path="/blogs" component = {BlogSearch} />
             <Route exact path="/login" component = {Login} />
             <Route exact path="/register" component = {Register} />

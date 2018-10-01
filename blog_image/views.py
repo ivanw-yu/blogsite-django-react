@@ -12,7 +12,8 @@ from user.permissions import OwnObjectOrReadOnlyPermission
 from user.authentications import MyJWTAuthentication
 
 from django.core.files.base import ContentFile
-import base64
+from blog_project.settings import MEDIA_ROOT
+import os, base64
 
 
 # Create your views here.
@@ -39,3 +40,50 @@ class BlogImageViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, *args, **kwargs):
+
+        try:
+          new_image = request.data.get('image')
+          if new_image is not None:
+            blog_image = self.get_object()
+
+            # if an image already exist, remove the image from the frontend/pubic/media/images
+            # directory. Note that each image file comes with the /media/images prefixed.
+            if len(blog_image.image) > 0:
+                os.remove('frontend/public' + blog_image.image.url)
+
+            # Get the file path and the image string without the base64 part
+            format, image_string = new_image.split(';base64,')
+            extension = format.split('/')[-1]
+            file_path = "images/blog{0}pic{1}.{2}".format(blog_image.blog.id,
+                                                          blog_image.id,
+                                                          extension)
+
+            # set the image and save.
+            blog_image.image = ContentFile(base64.b64decode(image_string),
+                                           name=file_path)
+            blog_image.save()
+
+            # prepare data to be sent back in the Response
+            data = {}
+            data['id'] = blog_image.id
+            data['user'] = blog_image.user.id
+            data['blog'] = blog_image.blog.id
+            data['order'] = blog_image.order
+            data['image'] = blog_image.image
+
+            serializer = self.serializer_class(data = data)
+
+            if serializer.is_valid():
+              return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+              print("ERROR", serializer.errors)
+              return Response(serializer.errors,
+                              status=status.HTTP_400_BAD_REQUEST)
+
+        except OSError:
+          print("OS ERROR")
+          print(str(OSError))
+          return Response({'message': 'Internal 500 error, replacing image file failed. Please try again later'},
+                          status=status.HTTP_500_INTERNAL_SERVER_ERROR)
