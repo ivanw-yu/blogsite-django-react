@@ -6,6 +6,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.files.base import ContentFile
+import base64, os
 
 from .models import UserProfile
 from .serializers import UserProfileSerializer
@@ -31,6 +33,49 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
+
+    def partial_update(self, request, *args, **kwargs):
+        profile = self.get_object()
+        image = request.data.get('image')
+
+        if image is not None and image != profile.image.url:
+
+            # remove the previous image
+            print("IMAGE:", image)
+            prevImage = profile.image
+            os.remove('frontend/public' + prevImage.url)
+
+            #create the new image
+            format, image_string = image.split(';base64,')
+            extension = format.split('/')[-1]
+
+            # decode the base64 image string, make filepath and set the image.
+            decoded_image_string = base64.b64decode(image_string)
+            file_path = 'profile_pictures/user{0}.{1}'.format(profile.user.id,
+                                                                  extension)
+            profile.image = ContentFile(decoded_image_string,
+                                            name=file_path)
+
+        bio = request.data.get('bio')
+        if bio is not None:
+            profile.bio = bio
+
+        profile.save()
+
+
+        # prepare data to send back.
+        data = {}
+        data['bio'] = profile.bio
+        data['user'] = profile.user
+        data['id'] = profile.id
+
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            return Response(serializer.data,
+                            status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     # def retrieve(self, request, *args, **kwargs):
     #     serializer = self.serializer_class(data=self.get_object(),
