@@ -68,15 +68,20 @@ export const editProfile = (profile, history) => async dispatch => {
     // delete the image from the profile object, so it is not patched over
     // through the request.
     console.log("prevProfile", prevProfile)
-    if(prevProfile.data.image === profile.image)
+    if(profile.image === prevProfile.image)
       delete profile.image;
 
     const response = await axios.patch(`${URI_PREFIX}/${profile.id}/`,
                                         profile,
                                         authenticationHeaders);
-    dispatch({ type: GET_SUCCESS_MESSAGE,
-               payload: { successMessage: "Profile successfully updated." } });
-    history.push('/dashboard');
+    console.log("RESPONSE", response.data)
+    if(response.data.success){
+      dispatch({ type: GET_SUCCESS_MESSAGE,
+                 payload: { successMessage: "Profile successfully updated." } });
+    }
+    //history.push('/dashboard');
+    //window.location.reload();
+    window.location.href = '/dashboard'; // to reload and prevent using cache
   }catch(error){
     dispatch({ type: GET_ERRORS,
                payload: {error}});

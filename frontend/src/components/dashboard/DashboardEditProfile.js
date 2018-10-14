@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { editProfile } from '../../actions/profileActions';
+import { editProfile,
+         getProfileByUserId } from '../../actions/profileActions';
 import TextInputGroup from '../commons/TextInputGroup';
 
 class DashboardEditProfile extends Component{
@@ -75,6 +76,10 @@ class DashboardEditProfile extends Component{
 
     fileReader.readAsDataURL(file);
   }
+  // 
+  // componentWillUnmount(){
+  //   this.props.getProfileByUserId(this.state.userId);
+  // }
 }
 
 
@@ -82,5 +87,5 @@ class DashboardEditProfile extends Component{
 //   {profile: state.profiles.profile,
 //    user: state.auth.user}
 // );
-export default withRouter(connect( null,
-                                  { editProfile })(DashboardEditProfile));
+export default withRouter(connect( null, { editProfile,
+                                           getProfileByUserId })(DashboardEditProfile));

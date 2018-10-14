@@ -18,6 +18,7 @@ class DashboardUserPanel extends Component{
           <li>
             <img src = { profile.profile.image }
                  className = "profile-pic"
+                 key = {profile.profile.image}
                  alt = "No Image"/>
             { `${profile.name} (${profile.email})`}
           </li>

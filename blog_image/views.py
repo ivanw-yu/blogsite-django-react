@@ -44,7 +44,9 @@ class BlogImageViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
 
         try:
+          print("1st try")
           new_image = request.data.get('image')
+          print("adter getting new image from request")
           if new_image is not None:
             blog_image = self.get_object()
 
@@ -59,19 +61,20 @@ class BlogImageViewSet(viewsets.ModelViewSet):
             file_path = "images/blog{0}pic{1}.{2}".format(blog_image.blog.id,
                                                           blog_image.id,
                                                           extension)
-
+            print("About to save")
             # set the image and save.
-            blog_image.image = ContentFile(base64.b64decode(image_string),
+            base64DecodedImage = base64.b64decode(image_string)
+            blog_image.image = ContentFile(base64DecodedImage,
                                            name=file_path)
             blog_image.save()
-
+            print("Saved")
             # prepare data to be sent back in the Response
             data = {}
             data['id'] = blog_image.id
             data['user'] = blog_image.user.id
             data['blog'] = blog_image.blog.id
             data['order'] = blog_image.order
-            data['image'] = blog_image.image
+            data['image'] = new_image#base64DecodedImage#blog_image.image
 
             serializer = self.serializer_class(data = data)
 

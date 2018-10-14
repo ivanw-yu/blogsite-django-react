@@ -38,10 +38,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         profile = self.get_object()
         image = request.data.get('image')
 
-        if image is not None and image != profile.image.url:
+        if image != profile.image.url:
 
             # remove the previous image
-            print("IMAGE:", image)
+            #print("IMAGE:", image)
             prevImage = profile.image
             os.remove('frontend/public' + prevImage.url)
 
@@ -64,15 +64,19 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 
         # prepare data to send back.
+        print("PRFILe", dir(profile), profile.user)
         data = {}
         data['bio'] = profile.bio
-        data['user'] = profile.user
+        data['user'] = profile.user.id
         data['id'] = profile.id
 
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
-            return Response(serializer.data,
-                            status=status.HTTP_200_OK)
+            return Response({'bio': serializer.data.get('bio'),
+                             'user': profile.user.id,
+                             'id': profile.id,
+                             'success': True
+                            }, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

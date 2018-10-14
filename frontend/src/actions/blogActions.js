@@ -141,7 +141,8 @@ export const editBlog = (blog, history) => async dispatch => {
 
     dispatch({ type: GET_SUCCESS_MESSAGE,
                paylod: {successMessage: "Blog edited!"}});
-    history.push("/dashboard");
+    //history.push("/dashboard");
+    window.location.href = '/dashboard';
   }catch(error){
     dispatch({type: GET_ERRORS,
               payload: error});
