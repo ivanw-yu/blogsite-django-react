@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import BlogList from '../blogs/BlogList';
+import Pagination from '../commons/Pagination';
 import { getBlogs } from '../../actions/blogActions';
 
 class DashboardBlogList extends Component {
@@ -18,7 +19,16 @@ class DashboardBlogList extends Component {
     const { blogs } = this.props;
     console.log("DashboardBlogList blogs:", this.props.blogs)
     return blogs && (
-      <BlogList blogs = {blogs.results} />
+        <React.Fragment>
+          <BlogList blogs = {blogs.results} />
+          <Pagination page = {blogs.page}
+                          count = {blogs.count}
+                          next = {blogs.next}
+                          prev = {blogs.prev}
+                          inDashboard = {true}
+                          user = {this.props.auth.user.id}
+                          type = "blogs" />
+        </React.Fragment>
     );
   }
 

@@ -32,7 +32,9 @@ export const getBlogs= (query) => async dispatch => {
 
     const response = await axios.get(`/api/blogs/?${queryString}`);
     dispatch({type: GET_BLOG_LIST,
-              payload: response.data});
+              payload: { ...response.data,
+                         searchTerm: query.search,
+                         page: query.page || 1} });
   }catch (error){
     dispatch({type: GET_ERRORS,
               payload: error});
