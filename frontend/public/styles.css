@@ -150,7 +150,7 @@
   display: block; /* allows anchor tag to take up entire width of container*/
 }
 
-.blog-list{
+.blog-list, .profile-list{
   width: 100%;
 }
 

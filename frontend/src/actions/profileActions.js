@@ -37,20 +37,25 @@ export const getProfiles= (query) => async dispatch => {
     // in the format key1=value1&key2=value2..
     // Object.keys makes an array of property names owned by the object only,
     // not inherited properties.
+
+    // trim the key, and replace spaces with | for regex searching
+    // on the backend.
+    if(query.search)
+      query.search = query.search.trim().replace(/[ ]+/, '|');
+
     const queryString = Object.keys(query)
-                              .map( key => {
-                                // trim the key, and replace spaces with | for regex searching
-                                // on the backend.
-                                return `${key}=${query[key].trim().replace(/[ ]+/, '|')}`
-                              })
+                              .map( key => ( `${key}=${query[key]}`)
+                                //return `${key}=${query[key].trim().replace(/[ ]+/, '|')}`
+                              )
                               .join('&');
-    console.log('queryString',queryString);
 
     // use /api/users instead in order to retrieve the name of user and email
     // as well as the profile.
     const response = await axios.get(`/api/users/?${queryString}`);
     dispatch({type: GET_PROFILE_LIST,
-              payload: response.data});
+              payload: { ...response.data,
+                         searchTerm: query.search || '',
+                         page: query.page || 1}});
   }catch (error){
     dispatch({type: GET_ERRORS,
               payload: error});
@@ -67,14 +72,12 @@ export const editProfile = (profile, history) => async dispatch => {
     // if the previous image of the profile is the same as the image sent,
     // delete the image from the profile object, so it is not patched over
     // through the request.
-    console.log("prevProfile", prevProfile)
     if(profile.image === prevProfile.image)
       delete profile.image;
 
     const response = await axios.patch(`${URI_PREFIX}/${profile.id}/`,
                                         profile,
                                         authenticationHeaders);
-    console.log("RESPONSE", response.data)
     if(response.data.success){
       dispatch({ type: GET_SUCCESS_MESSAGE,
                  payload: { successMessage: "Profile successfully updated." } });

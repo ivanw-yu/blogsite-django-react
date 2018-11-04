@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Blog
 
 from blog_image.serializers import BlogImageSerializer
+from user.serializers import UserSerializer
 
 class BlogSerializer(serializers.ModelSerializer):
 
@@ -11,6 +12,7 @@ class BlogSerializer(serializers.ModelSerializer):
     # when the Blog object is being validated using this serializer.
     image = BlogImageSerializer(many=True,
                                 required=False)
+    user = UserSerializer()
 
     class Meta:
         model = Blog

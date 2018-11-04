@@ -21,21 +21,53 @@ export const getBlogs= (query) => async dispatch => {
     // in the format key1=value1&key2=value2..
     // Object.keys makes an array of property names owned by the object only,
     // not inherited properties.
+
+    // trim the key, and replace spaces with | for regex searching
+    // on the backend.
+    const {search, page} = query;
+    if(query.search)
+      query.search = query.search.trim().replace(/[ ]+/, '');
+
     const queryString = Object.keys(query)
-                              .map( key => {
+                              .map( key => `${key}=${query[key]}`
                                 // trim the key, and replace spaces with | for regex searching
                                 // on the backend.
-                                return `${key}=${String(query[key]).trim().replace(/[ ]+/, '|')}`;
-                              })
+                                //return `${key}=${String(query[key]).trim().replace(/[ ]+/, '|')}`;
+                              )
                               .join('&');
-    console.log('queryString',queryString);
 
-    const response = await axios.get(`/api/blogs/?${queryString}`);
+    // request to get the blogs based on the query string.
+    // if no blogs found, and user is not specified in the query string,
+    // return all blogs. (This means when searching, and no results found,
+    // all blogs are returned instead; this does not happen when searching
+    // for blogs that belong to a specific user.)
+    let response,
+        noInitialResults = false;
+    try{
+      response = await axios.get(`/api/blogs/?${queryString}`);
+    }catch(error){
+      // if no blogs found on a blog search, get all blogs.
+      // this error occurs when page > 1 and the search term yields no result.
+      if(!query.user){
+        response = await axios(`/api/blogs/${page ? '?page=' + page : ''}`);
+        noInitialResults =  true;
+      }
+    }
+
+    let blogs = response.data,
+          isEmpty = blogs.count === 0 &&
+                    !query.user;
+    if(isEmpty){
+      response = await axios(`/api/blogs/${page ? '?page=' + page : ''}`);
+      noInitialResults = true;
+    }
     dispatch({type: GET_BLOG_LIST,
               payload: { ...response.data,
-                         searchTerm: query.search,
-                         page: query.page || 1} });
+                         searchTerm: search || null,
+                         page: query.page || 1,
+                         noInitialResults} });
   }catch (error){
+    console.log('error',error);
     dispatch({type: GET_ERRORS,
               payload: error});
   }
@@ -77,20 +109,6 @@ export const postBlog = (blog, history) => async dispatch => {
   }
 }
 
-// export const postBlogImage = (blog, userId) => async dispatch => {
-//   try{
-//     const response = await axios.post('/api/blogs/',
-//                                 blog,
-//                                 authenticationHeaders);
-//     dispatch({type: GET_SUCCESS_MESSAGE,
-//               payload: {successMessage: "Blog created!"}});
-//     history.push("/dashboard");
-//   }catch(error){
-//     dispatch({type: GET_ERRORS,
-//               payload: error});
-//   }
-// }
-
 export const editBlog = (blog, history) => async dispatch => {
   try{
 
@@ -102,31 +120,18 @@ export const editBlog = (blog, history) => async dispatch => {
     const response = await axios.patch(`/api/blogs/${blog.id}/`,
                                  data,
                                  authenticationHeaders);
-    console.log("AFTER BLOG PATCH", response.data)
 
     // delete/patch blog images that were on the current blog,
     // but not on the new blog. For now, only 1 image allowed per blog,
     // so that image will be the one that will be replaced.
 
     const images = response.data.image;
-    //console.log("images:", images);
-    // if(images.length > 0){
-    //   const newImagesHasPrevId = blog.images
-    //                                  .map(e => e.id)
-    //                                  .indexOf(images[0].id);
-    // }
-
-    //console.log("newImagesHasPrevId", newImagesHasPrevId);
 
     if(images.length === 0){
-
-      console.log("posting image");
       const addImageResponse = await axios.post('/api/blog_images/',
                                                 { image: blog.images[0].imageFile,
                                                    blog: blog.id },
                                                 authenticationHeaders);
-      console.log("addImageResponse", addImageResponse);
-
     }else{
       // if the newImages in the request does not contain id of blog image,
       // patch the blog image with the new one.
@@ -135,7 +140,6 @@ export const editBlog = (blog, history) => async dispatch => {
                                      .map(e => e.id)
                                      .indexOf(images[0].id);
 
-      console.log("PATCHING IMAGE ", blog.images[0])
       const patchImageResponse = await axios.patch(`/api/blog_images/${images[0].id}/`,
                                                    { image: blog.images[0].imageFile },
                                                    authenticationHeaders);
@@ -143,7 +147,6 @@ export const editBlog = (blog, history) => async dispatch => {
 
     dispatch({ type: GET_SUCCESS_MESSAGE,
                paylod: {successMessage: "Blog edited!"}});
-    //history.push("/dashboard");
     window.location.href = '/dashboard';
   }catch(error){
     dispatch({type: GET_ERRORS,

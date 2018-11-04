@@ -17,8 +17,8 @@ class ProfileCard extends Component{
         <div className = "blog-card"
              key = { profile.id }
              onClick = { (e) => this.onClick(profile.id) }>
-          { profile.profile.image ? (
-              <img src = { profile.profile.image }
+          { profile.image ? (
+              <img src = { profile.image }
                className = "blog-card-image"/> )
              : ( <div className = "blog-card-image"
                       style={{height: "70%",

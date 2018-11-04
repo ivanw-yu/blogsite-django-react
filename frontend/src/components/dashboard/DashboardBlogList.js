@@ -8,7 +8,6 @@ import { getBlogs } from '../../actions/blogActions';
 class DashboardBlogList extends Component {
 
   componentDidMount(){
-    console.log("id: ", this.props.auth.user.id);
     const query = { user: this.props.auth.user.id,
                     page: 1,
                     ordering: '-created' }
@@ -17,17 +16,17 @@ class DashboardBlogList extends Component {
 
   render(){
     const { blogs } = this.props;
-    console.log("DashboardBlogList blogs:", this.props.blogs)
     return blogs && (
         <React.Fragment>
           <BlogList blogs = {blogs.results} />
           <Pagination page = {blogs.page}
-                          count = {blogs.count}
-                          next = {blogs.next}
-                          prev = {blogs.prev}
-                          inDashboard = {true}
-                          user = {this.props.auth.user.id}
-                          type = "blogs" />
+                      count = {blogs.count}
+                      next = {blogs.next}
+                      prev = {blogs.prev}
+                      inDashboard = {true}
+                      user = {this.props.auth.user.id}
+                      type = "blogs"
+                      search = {null} />
         </React.Fragment>
     );
   }

@@ -41,7 +41,7 @@ class App extends Component {
           <Navbar auth = {this.props.auth} />
           <FlashMessage />
           <Switch>
-            <Route path="/profiles" component = {ProfileSearch}/>
+            <Route exact path="/profiles" component = {ProfileSearch}/>
             <Route exact path="/blogs" component = {BlogSearch} />
             <Route exact path="/login" component = {Login} />
             <Route exact path="/register" component = {Register} />

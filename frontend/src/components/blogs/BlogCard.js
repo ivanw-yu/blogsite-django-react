@@ -23,6 +23,7 @@ class BlogCard extends Component{
            }
           <div className = "blog-card-info" >
               { blog.title }
+              <p> By {blog.user.name} ({blog.user.email}) </p>
           </div>
         </div>
       </div>

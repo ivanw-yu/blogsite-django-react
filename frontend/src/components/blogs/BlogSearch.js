@@ -15,26 +15,20 @@ import { getBlogs } from '../../actions/blogActions';
 class BlogSearch extends Component{
   constructor(){
     super();
-    this.state = { noInitialResults: false}
+    this.state = { noInitialResults: false,
+                   searchTerm: null }
   }
 
-  componentDidUpdate(prevProps){
-    console.log("prevProps: ", prevProps)
+  // sets the search term of the initial search
+  componentDidMount(){
     const {blogs} = this.props;
-
-    // if the initial results has no blogs, get all the blogs instead,
-    // and set the noInitialResults state to true. By setting it to true,
-    // this ensures that any subsequent request for blogs does not happen due to
-    // the count being 0.
-    if(blogs && blogs.count === 0 && !this.state.noInitialResults){
-      console.log("REQUEST AGAIN");
-      this.props.getBlogs({page: 1});
-      this.setState({noInitialResults: true});
-    }
+    if(blogs)
+      this.setState({ searchTerm: blogs.searchTerm,
+                      noInitialResults: blogs.count === 0 });
   }
+
   // the acquired set of blogs is in the results property of blogs prop
   render(){
-    console.log("this.props.blogs in BlogSearch", this.props.blogs);
     const {blogs} = this.props;
     return blogs && (
       <React.Fragment>
@@ -42,26 +36,18 @@ class BlogSearch extends Component{
                       count = {blogs.count}
                       searchTerm = {blogs.searchTerm}
                       type = "blogs"
-                      noInitialResults = {this.state.noInitialResults}
-        />
+                      noInitialResults = {blogs.noInitialResults} />
         <BlogList blogs={blogs.results} />
         <Pagination page = {blogs.page}
-                        count = {blogs.count}
-                        next = {blogs.next}
-                        prev = {blogs.prev}
-                        type = "blogs" />
+                    count = {blogs.count}
+                    next = {blogs.next}
+                    prev = {blogs.prev}
+                    search = {blogs.searchTerm}
+                    type = "blogs" />
       </React.Fragment>
-    )
+    );
   }
 }
-
-// <p>
-//   { this.state.noInitialResults &&
-//       `No results found for
-//           search term '${blogs.searchTerm}',
-//           here are some blogs.` }
-//   {`Showing ${ blogs.page * 9 - 8 +'-'+ Math.min(blogs.page * 9, blogs.count)} blogs of ${blogs.count} blogs.`}
-// </p>
 
 const mapStateToProps = (state) => ({blogs: state.blogs.blogs});
 export default withRouter(connect(mapStateToProps, {getBlogs})(BlogSearch));
