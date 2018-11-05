@@ -11,17 +11,17 @@ class BlogCard extends Component{
     const { blog } = this.props;
     return blog && (
       <div className = "card-col">
-        <div className = "blog-card"
+        <div className = "card"
              key = { blog.id }
              onClick = { (e) => this.onClick(blog.id) }>
           { blog.image.length ? (
               <img src = {blog.image.length && blog.image[0].image}
-               className = "blog-card-image"/> )
+               className = "card-image"/> )
              : ( <div className = "blog-card-image"
                       style={{height: "70%",
                               width: "100%"}}> {blog.title} </div> )
            }
-          <div className = "blog-card-info" >
+          <div className = "card-info" >
               { blog.title }
               <p> By {blog.user.name} ({blog.user.email}) </p>
           </div>

@@ -15,9 +15,9 @@ class Pagination extends Component{
       count: this.props.count,
       next: this.props.next,
       previous: this.props.prev,
-      page: this.props.page,//new URLSearchParams(window.location.pathname).get('page') || 1,
-      buttons: this.getNumberOfButtons(this.props.count),//Math.ceil(this.props.count / 9),
-      search: this.props.search,//Term,//new URLSearchParams(window.location.pathname).get('search') || '',
+      page: this.props.page,
+      buttons: this.getNumberOfButtons(this.props.count),
+      search: this.props.search,
       user: this.props.user,
       numCurrentButtons: 5 // number of buttons per search result page is 5 at a time.
     }
@@ -61,7 +61,8 @@ class Pagination extends Component{
 
   renderButtons(){
     // startPage and lastPage are set up such that there can only be a maximum of 5 buttons at a time.
-    const {page: currentPage, buttons, search} = this.state,
+    const {buttons, search} = this.state,
+          currentPage = Number(this.state.page),
           paginationButtons = [],
           lastPage = this.getLastPage(),
           startPage = this.getStartPage();
@@ -69,13 +70,14 @@ class Pagination extends Component{
     for(let i = startPage; i <= lastPage; i++ )
       paginationButtons.push(i);
 
-    return paginationButtons.map( page => (
-        <button onClick = {e => this.navigate(page)}
-                key = {page}
-                className = { page === currentPage ? 'active-page' : ''} >
-                {page}
-        </button>
-      )
+    return paginationButtons.map( page => {
+        console.log(page,'===',currentPage);
+        return ( <button onClick = {e => this.navigate(page)}
+                        key = {page}
+                        className = { page === currentPage ? 'active-page' : ''} >
+                        {page}
+                </button> );
+      }
     );
   }
 
@@ -124,7 +126,7 @@ class Pagination extends Component{
     const {search} = this.props;
     if(this.props.type === 'blogs'){
       if( !this.props.inDashboard ){
-        this.props.getBlogs({search, page});
+        this.props.history.push(`/blogs?search=${search || ''}&page=${page}`)
       }else{
         this.props.getBlogs({user: this.state.user,
                              page,

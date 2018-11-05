@@ -26,7 +26,7 @@ class SearchBar extends Component{
     switch(this.state.category){
       case 'Blogs':
         this.props.getBlogs({search: this.state.searchKey});
-        this.props.history.push(`/blogs?search=${this.state.searchKey}`);
+        this.props.history.push(`/blogs?search=${this.state.searchKey}&page=1`);
         break;
       case 'Profiles':
         this.props.getProfiles({search: this.state.searchKey});
