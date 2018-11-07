@@ -17,6 +17,15 @@ class Blog(models.Model):
     view_count = models.BigIntegerField(default=0,
                                         validators=[MinValueValidator(0)])
 
+    def average_rating(self):
+        if self.ratings.count() == 0:
+            return 0
+        ratings = self.ratings.all()
+        sum = 0
+        for rating in ratings:
+            sum += rating.rating
+        return sum / self.ratings.count()
+
 
     def __str__(self):
         return "{0}\n{1}".format(self.title, self.content)

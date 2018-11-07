@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'comment',
     'blog_image',
     'user_profile',
+    'rating',
     'corsheaders'
 ]
 

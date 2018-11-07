@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/blogs/', include('blog.urls')),
     path('api/comments/', include('comment.urls')),
     path('api/blog_images/', include('blog_image.urls')),
-    path('api/profiles/', include('user_profile.urls'))
+    path('api/profiles/', include('user_profile.urls')),
+    path('api/ratings/', include('rating.urls')),
 ]

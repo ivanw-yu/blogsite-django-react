@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 class BlogCard extends Component{
 
@@ -30,6 +31,10 @@ class BlogCard extends Component{
     );
   }
 }
+
+BlogCard.propTypes = {
+  blog: PropTypes.object.isRequired
+};
 
 // adds history to BlogCard props, which is used for
 // programmatic navigation in a single page app.

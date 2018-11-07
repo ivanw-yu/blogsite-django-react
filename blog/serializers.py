@@ -13,6 +13,8 @@ class BlogSerializer(serializers.ModelSerializer):
     image = BlogImageSerializer(many=True,
                                 required=False)
     user = UserSerializer()
+    average_rating = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Blog
@@ -23,7 +25,13 @@ class BlogSerializer(serializers.ModelSerializer):
                   'created',
                   'edited',
                   'image',
-                  'view_count')
+                  'view_count',
+                  'average_rating')
 
         read_only_fields = ('created', 'edited')
         # extra_kwargs = { 'image': {'blank': True}}
+
+    def get_average_rating(self, obj):
+        # obj is the Blog instance, which has access to the average_rating()
+        # method.
+        return obj.average_rating()

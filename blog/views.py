@@ -10,6 +10,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import BlogSerializer
+from rating.serializers import RatingSerializer
 from user.authentications import MyJWTAuthentication
 from user.permissions import OwnObjectOrReadOnlyPermission
 from .models import Blog
@@ -76,7 +77,7 @@ class BlogViewSet(viewsets.ModelViewSet):
             print("\n\n OwnObject\n\n")
             permission_classes = [OwnObjectOrReadOnlyPermission]
 
-        if self.action in ['list', 'retrieve', 'view_count']:
+        if self.action in ['list', 'retrieve', 'view_count', 'ratings']:
             permission_classes = [AllowAny]
 
         return [permission() for permission in permission_classes]
@@ -179,6 +180,27 @@ class BlogViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(blog)
         return Response(serializer.data)
 
+    @action(detail=True,
+            methods=['GET'])
+    def ratings(self, request, **kwargs):
+        blog = self.get_object()
+        blog_ratings = blog.ratings.all()
+        print(blog.ratings.all(), blog.ratings.count())
+
+        if blog.ratings.count() == 0:
+            return Response( {"message": "No ratings found"},
+                             status = status.HTTP_404_NOT_FOUND )
+        serializer = RatingSerializer(blog_ratings)
+
+        #if serializer.is_valid():
+        # blog.ratings.values() converts the QuerySet into dictionary.
+        return Response(blog.ratings.values(), status=status.HTTP_200_OK)
+
+        #return Response(serializer.errors,
+        #                status=status.HTTP_400_BAD_REQUEST)
+
+        #return Response(serializer.data, status=status.HTTP_200_OK)
+        #return Response({"ratings": blog.ratings})
     # @action(detail=True,
     #         methods=['POST'])
     # def images(self, request, **kwargs):
