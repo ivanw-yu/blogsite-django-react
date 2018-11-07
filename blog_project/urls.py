@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/blog_images/', include('blog_image.urls')),
     path('api/profiles/', include('user_profile.urls')),
     path('api/ratings/', include('rating.urls')),
+    path('api/subscriptions/', include('subscription.urls'))
 ]

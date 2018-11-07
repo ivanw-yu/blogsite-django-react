@@ -194,7 +194,7 @@ class BlogViewSet(viewsets.ModelViewSet):
 
         #if serializer.is_valid():
         # blog.ratings.values() converts the QuerySet into dictionary.
-        return Response(blog.ratings.values(), status=status.HTTP_200_OK)
+        return Response({"ratings": blog.ratings.values()}, status=status.HTTP_200_OK)
 
         #return Response(serializer.errors,
         #                status=status.HTTP_400_BAD_REQUEST)

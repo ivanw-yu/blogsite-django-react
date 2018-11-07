@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'blog_image',
     'user_profile',
     'rating',
+    'subscription',
     'corsheaders'
 ]
 
