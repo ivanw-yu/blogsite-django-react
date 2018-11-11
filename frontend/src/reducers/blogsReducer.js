@@ -1,5 +1,6 @@
 import { GET_BLOG,
-         GET_BLOG_LIST} from '../actions/types';
+         GET_BLOG_LIST,
+         GET_BLOG_RATINGS} from '../actions/types';
 
 const initialState = {
   blogs: null,
@@ -14,6 +15,10 @@ export default function(state = initialState, action){
       console.log("GET_BLOG_LIST", action.payload)
       return {...state,
               blogs: action.payload};
+    case GET_BLOG_RATINGS:
+      console.log('get blog ratings payload',action.payload);
+      return { ...state,
+               ...action.payload }
     default:
       return state;
   }

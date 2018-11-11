@@ -33,6 +33,7 @@ class BlogSearch extends Component{
                       page });
     }else{
       const search = getQueryParamValue('search');
+      console.log(search);
       this.props.getBlogs({ search,
                             page,
                             ordering: '-created'});
@@ -45,9 +46,10 @@ class BlogSearch extends Component{
     const page = getQueryParamValue('page');
     if(this.state.page !== page){
       this.setState({page});
-      this.props.getBlogs({user: this.state.user,
-                           page,
-                           ordering: '-created'});
+      this.props.getBlogs({//user: this.state.user,
+                            search: this.state.search,
+                            page,
+                            ordering: '-created'});
     }
   }
 

@@ -6,6 +6,10 @@ export const GET_BLOG = 'GET_BLOG';
 
 export const GET_BLOG_LIST = 'GET_BLOG_LIST';
 
+export const GET_BLOG_RATINGS = 'GET_BLOG_RATINGS';
+
+export const GET_RATINGS = 'GET_RATINGS';
+
 export const GET_ERRORS = 'GET_ERROR';
 
 export const GET_SUCCESS_MESSAGE = 'GET_SUCCESS_MESSAGE';

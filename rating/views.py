@@ -7,11 +7,13 @@ from .models import Rating
 from .serializers import RatingSerializer
 from user.authentications import MyJWTAuthentication
 from user.permissions import OwnObjectOrReadOnlyPermission
+from .paginations import RatingsPagination
 
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     authentication_classes = (MyJWTAuthentication,)
+    pagination_class = RatingsPagination
 
     def get_permissions(self):
         permission_classes = []

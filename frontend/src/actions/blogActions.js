@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { GET_BLOG_LIST,
          GET_BLOG,
+         GET_BLOG_RATINGS,
          GET_ERRORS,
          GET_SUCCESS_MESSAGE } from './types';
 import getToken from '../utils/getToken';
@@ -151,5 +152,18 @@ export const editBlog = (blog, history) => async dispatch => {
   }catch(error){
     dispatch({type: GET_ERRORS,
               payload: error});
+  }
+}
+
+export const getBlogRatings = (query) => async dispatch => {
+  const {page, id} = query;
+
+  try{
+      const result = await axios(`/api/blogs/${id}/ratings/?page=${page}`);
+      console.log("ratings data", result.data);
+      dispatch({type: GET_BLOG_RATINGS, payload: {...result.data}});
+  }catch(error){
+      dispatch({type: GET_ERRORS,
+                payload: error});
   }
 }

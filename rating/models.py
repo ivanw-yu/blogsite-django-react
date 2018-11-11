@@ -19,5 +19,9 @@ class Rating(models.Model):
 
     RATING_CHOICES = [ (i, i) for i in range(0, 6) ]
     rating = models.IntegerField( choices = RATING_CHOICES )
+
     class Meta:
         unique_together = (("blog", "user"),)
+
+    def blog_header(self):
+        return '{0} (Author: {1})'.format(self.blog.title, self.blog.user.name)

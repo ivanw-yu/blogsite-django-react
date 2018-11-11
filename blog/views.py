@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django.core.paginator import Paginator
 
 from .serializers import BlogSerializer
 from rating.serializers import RatingSerializer
@@ -184,17 +185,22 @@ class BlogViewSet(viewsets.ModelViewSet):
             methods=['GET'])
     def ratings(self, request, **kwargs):
         blog = self.get_object()
-        blog_ratings = blog.ratings.all()
-        print(blog.ratings.all(), blog.ratings.count())
+        blog_ratings_list = blog.ratings.all()
+        page = request.query_params.get('page')
+        print('page', page)
+        #print(blog.ratings.all(), blog.ratings.count())
 
         if blog.ratings.count() == 0:
             return Response( {"message": "No ratings found"},
                              status = status.HTTP_404_NOT_FOUND )
-        serializer = RatingSerializer(blog_ratings)
+
+        paginator = Paginator(blog_ratings_list, 3) #3 per page
+        blog_ratings = paginator.get_page(page if page is not None else 1)
+        serializer = RatingSerializer(blog_ratings, many=True)
 
         #if serializer.is_valid():
         # blog.ratings.values() converts the QuerySet into dictionary.
-        return Response({"ratings": blog.ratings.values()}, status=status.HTTP_200_OK)
+        return Response({"ratings": serializer.data}, status=status.HTTP_200_OK)
 
         #return Response(serializer.errors,
         #                status=status.HTTP_400_BAD_REQUEST)

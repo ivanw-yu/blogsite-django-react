@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
+import BlogTitle from './BlogTitle';
+import BlogContent from './BlogContent';
+import BlogAuthorHeader from './BlogAuthorHeader';
+
 class BlogDetail extends Component{
   render(){
     console.log("BLOG: ", this.props.blog);
-    const { blog } = this.props;
-    return this.props.blog && this.props.user && (
+    const { blog, user } = this.props;
+    return blog && user && (
       <div className = "blog-view">
         {this.renderControlLinks()}
-        <h1> {blog.title} </h1>
-        <div style={{width: "100%",
-                     textAlign: "center"}} >
-          {blog.image.length && <img src ={blog.image[0].image}
-                              style={{height: "400px",
-                                      width: "100%"}}/>}
-        </div>
-        <p>
-          {blog.content}
-        </p>
+        <BlogTitle title = {blog.title}
+                   image = { blog.image && blog.image.length > 0 ?
+                              blog.image[0].image
+                             : null } />
+        <BlogAuthorHeader author = {user}
+                          date = {blog.created} />
+        <BlogContent content = {blog.content} />
       </div>
     );
   }
