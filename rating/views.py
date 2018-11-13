@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import (IsAuthenticated,
                                         AllowAny)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 from .models import Rating
 from .serializers import RatingSerializer
@@ -10,10 +12,15 @@ from user.permissions import OwnObjectOrReadOnlyPermission
 from .paginations import RatingsPagination
 
 class RatingViewSet(viewsets.ModelViewSet):
-    queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     authentication_classes = (MyJWTAuthentication,)
     pagination_class = RatingsPagination
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter)
+    ordering_fields = ('created',)
+    ordering = ('created',)
+    queryset = Rating.objects.all()
 
     def get_permissions(self):
         permission_classes = []

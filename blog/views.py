@@ -189,12 +189,16 @@ class BlogViewSet(viewsets.ModelViewSet):
         page = request.query_params.get('page')
         print('page', page)
         #print(blog.ratings.all(), blog.ratings.count())
-
-        if blog.ratings.count() == 0:
-            return Response( {"message": "No ratings found"},
+        num_ratings_per_page = 3
+        count = blog.ratings.count()
+        total = int(page) * num_ratings_per_page
+        if count == 0 or (total-count > num_ratings_per_page) :
+            return Response( { "message": "No ratings found",
+                               "count": count,
+                               "pageTimesNumPerPage": total },
                              status = status.HTTP_404_NOT_FOUND )
 
-        paginator = Paginator(blog_ratings_list, 3) #3 per page
+        paginator = Paginator(blog_ratings_list, num_ratings_per_page) #3 per page
         blog_ratings = paginator.get_page(page if page is not None else 1)
         serializer = RatingSerializer(blog_ratings, many=True)
 

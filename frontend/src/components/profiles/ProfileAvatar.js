@@ -1,7 +1,10 @@
 import React from 'react';
 
-export default ({image}) => ( image && ( <React.Fragment>
+export default ({image}) => ( image ? ( <React.Fragment>
       <img src = { image }
-       className = "card-image"/>
-    </React.Fragment> );
+       className = "profile-avatar-circular"/>
+    </React.Fragment> )
+    : ( <div style = {{ borderRadius: '50%',
+                        backgroundColor: 'grey' }}
+             className = "profile-avatar-circular" /> )
 )

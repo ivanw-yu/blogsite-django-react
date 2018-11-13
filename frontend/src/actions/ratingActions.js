@@ -1,5 +1,6 @@
 import { GET_RATINGS,
-         GET_ERRORS } from './types';
+         GET_ERRORS,
+         RESET_RATINGS } from './types';
 
 import axios from 'axios';
 
@@ -18,4 +19,8 @@ export const getRatings = (query) => async dispatch => {
       dispatch({type: GET_ERRORS,
                 payload: error});
     }
+}
+
+export const resetRatings = () => dispatch => {
+  dispatch({type: RESET_RATINGS});
 }

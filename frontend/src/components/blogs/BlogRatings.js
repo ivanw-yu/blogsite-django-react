@@ -4,11 +4,16 @@ import BlogRating from './BlogRating';
 // import {getRatings} from '../../actions/blogActions';
 
 
-export default ({ ratings }) => ( ratings.map( rating => (
-      <BlogRating key = {rating.id}
-                  rating = {rating}
-                  id = {rating.id} />)
-    )
+export default ({ ratings }) => (
+  <div className = "ratings-list-area">
+    <h1>Ratings</h1>
+    { ratings.map( rating => (
+        <BlogRating key = {rating.id}
+                    rating = {rating}
+                    id = {rating.id} />)
+      )
+    }
+  </div>
 );
 // getBlogRatings action creator is passed to this child component
 // class BlogRatings extends Component{

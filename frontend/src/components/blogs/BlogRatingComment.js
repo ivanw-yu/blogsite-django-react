@@ -1,4 +1,4 @@
 import React from 'react';
 
-export default ({comment}) => (<div> {comment} </div>
+export default ({comment}) => (<div className="rating-comment-div"> {comment} </div>
 );
